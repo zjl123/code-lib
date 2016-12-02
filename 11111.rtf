@@ -1,0 +1,652 @@
+{\rtf1\ansi\ansicpg936\cocoartf1504
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset134 PingFangSC-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green116\blue0;\red0\green0\blue0;\red100\green56\blue32;
+\red196\green26\blue22;\red170\green13\blue145;\red63\green110\blue116;\red92\green38\blue153;\red46\green13\blue110;
+\red38\green71\blue75;\red28\green0\blue207;}
+{\*\expandedcolortbl;\csgray\c100000;\csgenericrgb\c0\c45600\c0;\csgenericrgb\c0\c0\c0;\csgenericrgb\c39100\c22000\c12500;
+\csgenericrgb\c77000\c10200\c8600;\csgenericrgb\c66500\c5200\c56900;\csgenericrgb\c24700\c43100\c45600;\csgenericrgb\c35900\c14900\c60100;\csgenericrgb\c18100\c5200\c43100;
+\csgenericrgb\c14900\c27800\c29400;\csgenericrgb\c11000\c0\c81000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab866
+\pard\tx866\pardeftab866\pardirnatural\partightenfactor0
+
+\f0\fs36 \cf2 \CocoaLigature0 //\cf3 \
+\cf2 //  ActiveViewController.m\cf3 \
+\cf2 //  MiningCircle\cf3 \
+\cf2 //\cf3 \
+\cf2 //  Created by zhanglily on 15/7/30.\cf3 \
+\cf2 //  Copyright (c) 2015
+\f1 \'c4\'ea
+\f0  zjl. All rights reserved.\cf3 \
+\cf2 //\cf3 \
+\
+\cf4 #import \cf5 "ActiveViewController.h"\cf4 \
+#import \cf5 "UIImageView+WebCache.h"\cf4 \
+#import \cf5 "DataManager.h"\cf4 \
+#import \cf5 "PwdEdite.h"\cf4 \
+#import \cf5 "MJRefresh.h"\cf4 \
+#import \cf5 "Login1ViewController.h"\cf4 \
+#import \cf5 "BannerDetailViewController.h"\cf4 \
+#import \cf5 "WebViewController.h"\cf4 \
+#import \cf5 "Tool.h"\cf4 \
+#import \cf5 "BgImgButton.h"\cf4 \
+#import \cf5 "IMSearchFriendViewController.h"\cf4 \
+#import \cf5 "RCDChatListCell.h"\cf4 \
+#import \cf5 "IMUserModel.h"\cf4 \
+#import \cf5 "NewFriendsViewController.h"\cf4 \
+#import \cf5 "MNDataBaseManager.h"\cf4 \
+#import \cf5 "AddTableViewCell.h"\cf4 \
+#import \cf5 "ActSubTbVIew.h"\cf4 \
+#import \cf5 "AddressBookViewController.h"\cf4 \
+#import \cf5 "ImgButton.h"\cf4 \
+#import \cf5 "NSString+Exten.h"\cf4 \
+\cf6 @interface\cf3  \cf7 ActiveViewController\cf3  () <\cf8 UIWebViewDelegate\cf3 ,\cf8 UIGestureRecognizerDelegate\cf3 ,\cf7 JumpDelegate\cf3 ,\cf8 UIAlertViewDelegate\cf3 >\
+\{\
+    \
+    \cf8 NSArray\cf3  *bannerArr;\
+    \cf8 NSMutableArray\cf3  *listArr;\
+    \cf8 NSMutableDictionary\cf3  *listParamesdictParams;\
+    \cf8 NSDictionary\cf3  *dictParams;\
+    \cf8 NSMutableDictionary\cf3  *listDict;\
+    \cf8 NSDictionary\cf3  *kuangDict;\
+    \cf6 int\cf3  page;\
+    \cf2 //
+\f1 \'b5\'af\'b3\'f6\'b2\'cb\'b5\'a5
+\f0 \cf3 \
+    \cf7 ActSubTbVIew\cf3  *tbView;\
+    \cf2 //
+\f1 \'b5\'af\'b3\'f6\'b2\'cb\'b5\'a5\'b1\'b3\'be\'b0
+\f0 \cf3 \
+    \cf8 UIView\cf3  *bgView;\
+    \cf2 //
+\f1 \'cc\'e1\'d0\'d1\'b5\'c7\'c2\'bd
+\f0 \cf3 \
+    \cf8 UILabel\cf3  *tipLabel ;\
+    \cf8 UIView\cf3  *tipBgView;\
+\}\
+\cf6 @property\cf3  (\cf6 nonatomic\cf3 , \cf6 retain\cf3 ) \cf8 NSArray\cf3  *tbArr;\
+\cf6 @end\cf3 \
+\
+\cf6 @implementation\cf3  ActiveViewController\
+\
+\
+-(\cf6 instancetype\cf3 )init\
+\{\
+    \cf6 self\cf3  = [\cf6 super\cf3  \cf9 init\cf3 ];\
+    \cf6 if\cf3 (\cf6 self\cf3 )\
+    \{\
+        \cf2 //
+\f1 \'c9\'e8\'d6\'c3\'d0\'e8\'d2\'aa\'cf\'d4\'ca\'be\'b5\'c4\'c4\'c4\'d0\'a9\'c0\'e0\'d0\'cd\'b5\'c4\'bb\'e1\'bb\'b0
+\f0 \cf3 \
+        [\cf6 self\cf3  \cf10 setDisplayConversationTypeArray\cf3 :\cf11 @[@(\cf10 ConversationType_PRIVATE\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_DISCUSSION\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_SYSTEM\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_PUSHSERVICE\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_GROUP\cf11 )]\cf3 ];\
+        \cf2 //
+\f1 \'c9\'e8\'d6\'c3\'d0\'e8\'d2\'aa\'bd\'ab\'c4\'c7\'d0\'a9\'c0\'e0\'d0\'cd\'b5\'c4\'bb\'e1\'bb\'b0\'d4\'da\'bb\'e1\'bb\'b0\'c1\'d0\'b1\'ed\'d6\'d0\'be\'db\'ba\'cf\'cf\'d4\'ca\'be
+\f0 \cf3 \
+        [\cf6 self\cf3  \cf10 setCollectionConversationType\cf3 :\cf11 @[@(\cf10 ConversationType_DISCUSSION\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_SYSTEM\cf11 )\cf3 ,\cf11 @(\cf10 ConversationType_PUSHSERVICE\cf11 )]\cf3 ];\
+    \}\
+    \cf6 return\cf3  \cf6 self\cf3 ;\
+\}\
+\
+- (\cf6 void\cf3 )viewDidLoad \{\
+    [\cf6 super\cf3  \cf9 viewDidLoad\cf3 ];\
+    \cf2 // Do any additional setup after loading the view.\cf3 \
+    \cf7 BgImgButton\cf3  *btn = (\cf7 BgImgButton\cf3  *)[\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3  \cf9 viewWithTag\cf3 :\cf11 888\cf3 ];\
+    btn.\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+    \cf2 //
+\f1 \'b5\'a5\'c1\'c4
+\f0 \cf3 \
+    \cf8 UIButton\cf3  *rightBtn = [\cf8 UIButton\cf3  \cf9 buttonWithType\cf3 :\cf9 UIButtonTypeCustom\cf3 ];\
+    rightBtn.\cf8 frame\cf3  = \cf9 CGRectMake\cf3 (\cf11 0\cf3 , \cf11 0\cf3 , \cf11 40\cf3 , \cf11 30\cf3 );\
+    [rightBtn \cf9 setTitle\cf3 :\cf5 @"
+\f1 \'cc\'ed\'bc\'d3
+\f0 "\cf3  \cf9 forState\cf3 :\cf9 UIControlStateNormal\cf3 ];\
+    [rightBtn \cf9 addTarget\cf3 :\cf6 self\cf3  \cf9 action\cf3 :\cf6 @selector\cf3 (rightClick:) \cf9 forControlEvents\cf3 :\cf9 UIControlEventTouchUpInside\cf3 ];\
+    \cf6 self\cf3 .\cf8 navigationItem\cf3 .\cf8 rightBarButtonItem\cf3  = [[\cf8 UIBarButtonItem\cf3  \cf9 alloc\cf3 ]\cf9 initWithCustomView\cf3 :rightBtn];\
+    \cf2 //
+\f1 \'d7\'a2\'b2\'e1
+\f0 cell\cf3 \
+    \cf8 UINib\cf3  *nib1 = [\cf8 UINib\cf3  \cf9 nibWithNibName\cf3 :\cf5 @"RCDChatListCell"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+    [\cf6 self\cf3 .\cf7 conversationListTableView\cf3  \cf9 registerNib\cf3 :nib1 \cf9 forCellReuseIdentifier\cf3 :\cf5 @"RCD1"\cf3 ];\
+    \cf6 self\cf3 .\cf7 tbArr\cf3  = \cf11 @[@\{\cf5 @"title"\cf3 :\cf5 @"
+\f1 \'cc\'ed\'bc\'d3
+\f0 "\cf3 ,\cf5 @"ico"\cf3 :\cf5 @""\cf11 \}\cf3 ,\cf11 @\{\cf5 @"title"\cf3 :\cf5 @"
+\f1 \'cd\'a8\'d1\'b6\'c2\'bc
+\f0 "\cf3 ,\cf5 @"ico"\cf3 :\cf5 @""\cf11 \}]\cf3 ;\
+\cf2 //    //
+\f1 \'c5\'d0\'b6\'cf\'b5\'c7\'c2\'bd
+\f0 \cf3 \
+\cf2 //    if ([DEFAULT integerForKey:@"login"] == 0) \{\cf3 \
+\cf2 //        UIAlertView *alter = [[UIAlertView alloc]initWithTitle:@"
+\f1 \'cc\'e1\'ca\'be
+\f0 " message:@"
+\f1 \'ce\'b4\'b5\'c7\'c2\'bc\'a3\'ac\'c7\'eb\'cf\'c8\'b5\'c7\'c2\'bc\'a3\'a1
+\f0 " delegate:self cancelButtonTitle:@"
+\f1 \'c8\'a1\'cf\'fb
+\f0 " otherButtonTitles:@"
+\f1 \'b5\'c7\'c2\'bc
+\f0 ", nil];\cf3 \
+\cf2 //        [alter show];\cf3 \
+\cf2 //    \}\cf3 \
+\}\
+\cf2 //-(void)viewWillAppear:(BOOL)animated\cf3 \
+\cf2 //\{\cf3 \
+\cf2 //    [super viewWillAppear:animated];\cf3 \
+\cf2 //   \cf3 \
+\cf2 //    if([DEFAULT integerForKey:@"login"] == 1)\cf3 \
+\cf2 //    \{\cf3 \
+\cf2 //        if(tipBgView)\cf3 \
+\cf2 //        \{\cf3 \
+\cf2 //            [tipBgView removeFromSuperview];\cf3 \
+\cf2 //            tipBgView = nil;\cf3 \
+\cf2 //        \}\cf3 \
+\cf2 //        [self.conversationListTableView reloadData];\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //    \cf3 \
+\cf2 //\}\cf3 \
+-(\cf6 void\cf3 )rightClick:(\cf8 UIButton\cf3  *)sender\
+\{\
+    \cf2 //
+\f1 \'b5\'af\'b3\'f6\'b2\'cb\'b5\'a5
+\f0 \cf3 \
+    [\cf6 self\cf3  \cf10 setUpTbView\cf3 :sender];\
+    \
+\}\
+-(\cf6 void\cf3 )onSelectedTableRow:(\cf7 RCConversationModelType\cf3 )conversationModelType conversationModel:(\cf7 RCConversationModel\cf3  *)model atIndexPath:(\cf8 NSIndexPath\cf3  *)indexPath\
+\{\
+    \cf7 RCConversationViewController\cf3  *conversationVC = [[\cf7 RCConversationViewController\cf3  \cf9 alloc\cf3 ]\cf9 init\cf3 ];\
+    conversationVC.\cf7 conversationType\cf3  = model.\cf7 conversationType\cf3 ;\
+    \cf6 if\cf3 (conversationModelType == \cf10 RC_CONVERSATION_MODEL_TYPE_PUBLIC_SERVICE\cf3  )\
+    \{\
+        conversationVC.\cf7 targetId\cf3  = model.\cf7 targetId\cf3 ;\
+        conversationVC.\cf8 title\cf3  = model.\cf7 conversationTitle\cf3 ;\
+        [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :conversationVC \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+    \}\
+    \cf6 if\cf3 (conversationModelType == \cf10 RC_CONVERSATION_MODEL_TYPE_NORMAL\cf3 )\
+    \{\
+        conversationVC.\cf7 targetId\cf3  = model.\cf7 targetId\cf3 ;\
+        conversationVC.\cf8 title\cf3  = model.\cf7 conversationTitle\cf3 ;\
+        conversationVC.\cf7 unReadMessage\cf3  = model.\cf7 unreadMessageCount\cf3 ;\
+        conversationVC.\cf7 enableNewComingMessageIcon\cf3  = \cf6 YES\cf3 ;\
+        conversationVC.\cf7 enableUnreadMessageIcon\cf3  = \cf6 YES\cf3 ;\
+        \cf6 if\cf3 (model.\cf7 conversationType\cf3  == \cf10 ConversationType_SYSTEM\cf3 )\
+        \{\
+            conversationVC.\cf8 title\cf3  = \cf5 @"
+\f1 \'cf\'b5\'cd\'b3\'cf\'fb\'cf\'a2
+\f0 "\cf3 ;\
+        \}\
+        \cf6 if\cf3 ([model.\cf7 objectName\cf3  \cf9 isEqualToString\cf3 :\cf5 @"RC:ContactNtf"\cf3 ])\
+        \{\
+            \cf7 NewFriendsViewController\cf3  *newFriends = [[\cf7 NewFriendsViewController\cf3  \cf9 alloc\cf3 ]\cf9 initWithNibName\cf3 :\cf5 @"NewFriendsViewController"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+            newFriends.\cf7 needSyncFriendList\cf3  = \cf6 YES\cf3 ;\
+            [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :newFriends \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+            \cf6 return\cf3 ;\
+        \}\
+        \cf2 //
+\f1 \'c8\'e7\'b9\'fb\'b5\'a5\'c1\'c4\'a3\'ac\'b2\'bb\'cf\'d4\'ca\'be\'b7\'a2\'cb\'cd\'b7\'bd\'ea\'c7\'b3\'c6
+\f0 \cf3 \
+        \cf6 if\cf3 (model.\cf7 conversationType\cf3  == \cf10 ConversationType_PRIVATE\cf3 )\
+        \{\
+            conversationVC.\cf7 displayUserNameInCell\cf3  = \cf6 NO\cf3 ;\
+        \}\
+        [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :conversationVC \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+    \}\
+    \cf6 if\cf3 (conversationModelType == \cf10 RC_CONVERSATION_MODEL_TYPE_COLLECTION\cf3 )\
+    \{\
+        \cf7 ActiveViewController\cf3  *temp = [[\cf7 ActiveViewController\cf3  \cf9 alloc\cf3 ]\cf9 init\cf3 ];\
+        \cf8 NSArray\cf3  *arr = [\cf8 NSArray\cf3  \cf9 arrayWithObject\cf3 :[\cf8 NSNumber\cf3  \cf9 numberWithInt\cf3 :model.\cf7 conversationType\cf3 ]];\
+        [temp \cf10 setDisplayConversationTypes\cf3 :arr];\
+        [temp \cf10 setCollectionConversationType\cf3 :\cf6 nil\cf3 ];\
+        temp.\cf7 isEnteredToCollectionViewController\cf3  = \cf6 YES\cf3 ;\
+        [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :temp \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+    \}\
+    \cf2 //
+\f1 \'d7\'d4\'b6\'a8\'d2\'e5\'bb\'e1\'bb\'b0\'c0\'e0\'d0\'cd
+\f0 \cf3 \
+    \cf6 if\cf3 (conversationModelType == \cf10 RC_CONVERSATION_MODEL_TYPE_CUSTOMIZATION\cf3 )\
+    \{\
+      \cf7 RCConversationModel\cf3  *model =   \cf6 self\cf3 .\cf7 conversationListDataSource\cf3 [indexPath.\cf8 row\cf3 ];\
+        \cf6 if\cf3 ([model.\cf7 objectName\cf3  \cf9 isEqualToString\cf3 :\cf5 @"RC:ContactNtf"\cf3 ])\
+        \{\
+            \cf7 NewFriendsViewController\cf3  *newFriends = [[\cf7 NewFriendsViewController\cf3  \cf9 alloc\cf3 ]\cf9 initWithNibName\cf3 :\cf5 @"NewFriendsViewController"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+            \cf7 RCContactNotificationMessage\cf3  *_contactNotificationMsg = (\cf7 RCContactNotificationMessage\cf3  *)model.\cf7 lastestMessage\cf3 ;\
+            \cf8 NSDictionary\cf3  *userInfo = [\cf4 DEFAULT\cf3  \cf9 objectForKey\cf3 :_contactNotificationMsg.\cf7 sourceUserId\cf3 ];\
+            \cf6 if\cf3 (userInfo.\cf8 count\cf3  > \cf11 0\cf3 )\
+            \{\
+                newFriends.\cf7 model\cf3  = [[\cf7 IMUserModel\cf3  \cf9 alloc\cf3 ]\cf10 initWithDictionary\cf3 :userInfo];\
+                \
+            \}\
+            [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :newFriends \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+        \}\
+    \
+    \}\
+    \cf9 dispatch_after\cf3 (\
+                   \cf9 dispatch_time\cf3 (\cf4 DISPATCH_TIME_NOW\cf3 , (\cf8 int64_t\cf3 )(\cf11 0.5\cf3  * \cf4 NSEC_PER_SEC\cf3 )),\
+                   \cf9 dispatch_get_global_queue\cf3 (\cf4 DISPATCH_QUEUE_PRIORITY_DEFAULT\cf3 , \cf11 0\cf3 ), ^\{\
+                       [\cf6 self\cf3  \cf10 refreshConversationTableViewIfNeeded\cf3 ];\
+                   \});\
+    \
+\}\
+\cf2 //\cf3 \
+\cf2 //\cf3 \
+\cf2 ////*********************
+\f1 \'b2\'e5\'c8\'eb\'d7\'d4\'b6\'a8\'d2\'e5
+\f0 Cell*********************//\cf3 \
+\cf2 //\cf3 \
+\cf2 ////
+\f1 \'b2\'e5\'c8\'eb\'d7\'d4\'b6\'a8\'d2\'e5\'bb\'e1\'bb\'b0
+\f0 model\cf3 \
+\cf2 //- (NSMutableArray *)willReloadTableData:(NSMutableArray *)dataSource \{\cf3 \
+\cf2 //    \cf3 \
+\cf2 //    for (int i = 0; i < dataSource.count; i++) \{\cf3 \
+\cf2 //        RCConversationModel *model = dataSource[i];\cf3 \
+\cf2 //        //
+\f1 \'c9\'b8\'d1\'a1\'c7\'eb\'c7\'f3\'cc\'ed\'bc\'d3\'ba\'c3\'d3\'d1\'b5\'c4\'cf\'b5\'cd\'b3\'cf\'fb\'cf\'a2\'a3\'ac\'d3\'c3\'d3\'da\'c9\'fa\'b3\'c9\'d7\'d4\'b6\'a8\'d2\'e5\'bb\'e1\'bb\'b0\'c0\'e0\'d0\'cd\'b5\'c4
+\f0 cell\cf3 \
+\cf2 //        if (model.conversationType == ConversationType_SYSTEM &&\cf3 \
+\cf2 //            [model.lastestMessage\cf3 \
+\cf2 //             isMemberOfClass:[RCContactNotificationMessage class]]) \{\cf3 \
+\cf2 //                model.conversationModelType = RC_CONVERSATION_MODEL_TYPE_CUSTOMIZATION;\cf3 \
+\cf2 //            \}\cf3 \
+\cf2 //        if ([model.lastestMessage\cf3 \
+\cf2 //             isKindOfClass:[RCGroupNotificationMessage class]]) \{\cf3 \
+\cf2 //            RCGroupNotificationMessage *groupNotification =\cf3 \
+\cf2 //            (RCGroupNotificationMessage *)model.lastestMessage;\cf3 \
+\cf2 //            if ([groupNotification.operation isEqualToString:@"Quit"]) \{\cf3 \
+\cf2 //                NSData *jsonData =\cf3 \
+\cf2 //                [groupNotification.data dataUsingEncoding:NSUTF8StringEncoding];\cf3 \
+\cf2 //                NSDictionary *dictionary = [NSJSONSerialization\cf3 \
+\cf2 //                                            JSONObjectWithData:jsonData\cf3 \
+\cf2 //                                            options:NSJSONReadingMutableContainers\cf3 \
+\cf2 //                                            error:nil];\cf3 \
+\cf2 //                NSDictionary *data =\cf3 \
+\cf2 //                [dictionary[@"data"] isKindOfClass:[NSDictionary class]]\cf3 \
+\cf2 //                ? dictionary[@"data"]\cf3 \
+\cf2 //                : nil;\cf3 \
+\cf2 //                NSString *nickName =\cf3 \
+\cf2 //                [data[@"operatorNickname"] isKindOfClass:[NSString class]]\cf3 \
+\cf2 //                ? data[@"operatorNickname"]\cf3 \
+\cf2 //                : nil;\cf3 \
+\cf2 //                if ([nickName isEqualToString:[RCIM sharedRCIM].currentUserInfo.name]) \{\cf3 \
+\cf2 //                    [[RCIMClient sharedRCIMClient]\cf3 \
+\cf2 //                     removeConversation:model.conversationType\cf3 \
+\cf2 //                     targetId:model.targetId];\cf3 \
+\cf2 //                    [self refreshConversationTableViewIfNeeded];\cf3 \
+\cf2 //                \}\cf3 \
+\cf2 //            \}\cf3 \
+\cf2 //        \}\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //    \cf3 \
+\cf2 //    return dataSource;\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //\cf3 \
+\cf2 ////
+\f1 \'d7\'f3\'bb\'ac\'c9\'be\'b3\'fd
+\f0 \cf3 \
+\cf2 //- (void)rcConversationListTableView:(UITableView *)tableView\cf3 \
+\cf2 //                 commitEditingStyle:(UITableViewCellEditingStyle)editingStyle\cf3 \
+\cf2 //                  forRowAtIndexPath:(NSIndexPath *)indexPath \{\cf3 \
+\cf2 //    //
+\f1 \'bf\'c9\'d2\'d4\'b4\'d3\'ca\'fd\'be\'dd\'bf\'e2\'c9\'be\'b3\'fd\'ca\'fd\'be\'dd
+\f0 \cf3 \
+\cf2 //    RCConversationModel *model = self.conversationListDataSource[indexPath.row];\cf3 \
+\cf2 //    [[RCIMClient sharedRCIMClient] removeConversation:ConversationType_SYSTEM\cf3 \
+\cf2 //                                             targetId:model.targetId];\cf3 \
+\cf2 //    [self.conversationListDataSource removeObjectAtIndex:indexPath.row];\cf3 \
+\cf2 //    [self.conversationListTableView reloadData];\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //\cf3 \
+\cf2 ////
+\f1 \'b8\'df\'b6\'c8
+\f0 \cf3 \
+\cf2 //- (CGFloat)rcConversationListTableView:(UITableView *)tableView\cf3 \
+\cf2 //               heightForRowAtIndexPath:(NSIndexPath *)indexPath \{\cf3 \
+\cf2 //    return 67.0f;\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //\cf3 \
+\cf2 ////
+\f1 \'d7\'d4\'b6\'a8\'d2\'e5
+\f0 cell\cf3 \
+\cf2 //- (RCConversationBaseCell *)rcConversationListTableView:(UITableView *)tableView\cf3 \
+\cf2 //                                  cellForRowAtIndexPath:\cf3 \
+\cf2 //(NSIndexPath *)indexPath \{\cf3 \
+\cf2 //    RCConversationModel *model = self.conversationListDataSource[indexPath.row];\cf3 \
+\cf2 //    \cf3 \
+\cf2 //    __block NSString *userName = nil;\cf3 \
+\cf2 //    __block NSString *portraitUri = nil;\cf3 \
+\cf2 //    \cf3 \
+\cf2 //    __weak ActiveViewController *weakSelf = self;\cf3 \
+\cf2 //    //
+\f1 \'b4\'cb\'b4\'a6\'d0\'e8\'d2\'aa\'cc\'ed\'bc\'d3\'b8\'f9\'be\'dd
+\f0 userid
+\f1 \'c0\'b4\'bb\'f1\'c8\'a1\'d3\'c3\'bb\'a7\'d0\'c5\'cf\'a2\'b5\'c4\'c2\'df\'bc\'ad\'a3\'ac
+\f0 extend
+\f1 \'d7\'d6\'b6\'ce\'b2\'bb\'b4\'e6\'d4\'da\'d3\'da
+\f0 DB
+\f1 \'d6\'d0\'a3\'ac\'b5\'b1\'ca\'fd\'be\'dd\'c0\'b4\'d7\'d4
+\f0 db
+\f1 \'ca\'b1\'c3\'bb\'d3\'d0
+\f0 extend
+\f1 \'d7\'d6\'b6\'ce\'c4\'da\'c8\'dd\'a3\'ac\'d6\'bb\'d3\'d0
+\f0 userid\cf3 \
+\cf2 //    if (nil == model.extend) \{\cf3 \
+\cf2 //        // Not finished yet, To Be Continue...\cf3 \
+\cf2 //        if (model.conversationType == ConversationType_SYSTEM &&\cf3 \
+\cf2 //            [model.lastestMessage\cf3 \
+\cf2 //             isMemberOfClass:[RCContactNotificationMessage class]]) \{\cf3 \
+\cf2 //                RCContactNotificationMessage *_contactNotificationMsg =\cf3 \
+\cf2 //                (RCContactNotificationMessage *)model.lastestMessage;\cf3 \
+\cf2 //                if (_contactNotificationMsg.sourceUserId == nil) \{\cf3 \
+\cf2 //                    RCDChatListCell *cell =\cf3 \
+\cf2 //                    [[RCDChatListCell alloc] initWithStyle:UITableViewCellStyleDefault\cf3 \
+\cf2 //                                           reuseIdentifier:@""];\cf3 \
+\cf2 //                    cell.lblDetail.text = @"
+\f1 \'ba\'c3\'d3\'d1\'c7\'eb\'c7\'f3
+\f0 ";\cf3 \
+\cf2 //                    [cell.ivAva sd_setImageWithURL:[NSURL URLWithString:portraitUri]\cf3 \
+\cf2 //                                  placeholderImage:[UIImage imageNamed:@"contact"]];\cf3 \
+\cf2 //                    return cell;\cf3 \
+\cf2 //                \}\cf3 \
+\cf2 //                NSDictionary *_cache_userinfo = [[NSUserDefaults standardUserDefaults]\cf3 \
+\cf2 //                                                 objectForKey:_contactNotificationMsg.sourceUserId];\cf3 \
+\cf2 //                if (_cache_userinfo.count > 0) \{\cf3 \
+\cf2 //                    userName = _cache_userinfo[@"username"];\cf3 \
+\cf2 //                    portraitUri = _cache_userinfo[@"portraitUri"];\cf3 \
+\cf2 //                \} else \{\cf3 \
+\cf2 //                    NSDictionary *emptyDic = @\{\};\cf3 \
+\cf2 //                    [[NSUserDefaults standardUserDefaults]\cf3 \
+\cf2 //                     setObject:emptyDic\cf3 \
+\cf2 //                     forKey:_contactNotificationMsg.sourceUserId];\cf3 \
+\cf2 //                    [[NSUserDefaults standardUserDefaults] synchronize];\cf3 \
+\cf2 //                    //
+\f1 \'c7\'eb\'c7\'f3
+\f0 \cf3 \
+\cf2 //                    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];\cf3 \
+\cf2 //                    NSString *getUrl = [NSString stringWithFormat:@"%@rongyunfindFriend&userId=%@",GETURL,_contactNotificationMsg.sourceUserId];\cf3 \
+\cf2 //                    [manager GET:getUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) \{\cf3 \
+\cf2 //                        \cf3 \
+\cf2 //                    \} success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) \{\cf3 \
+\cf2 //                        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];\cf3 \
+\cf2 //                        NSLog(@"dict%@",dict);\cf3 \
+\cf2 //                        NSArray *arr = dict[@"friends"];\cf3 \
+\cf2 //                        if(arr.count > 0)\cf3 \
+\cf2 //                        \{\cf3 \
+\cf2 //                            NSDictionary *dict1 = arr[0];\cf3 \
+\cf2 //                            if(dict1.count > 0)\cf3 \
+\cf2 //                            \{\cf3 \
+\cf2 //                                IMUserModel *rcduserinfo_ = [IMUserModel new];\cf3 \
+\cf2 //                                NSString *name = dict1[@"user_name"];\cf3 \
+\cf2 //                                name = [Tool judgeNil:name];\cf3 \
+\cf2 //                                rcduserinfo_.name = name ;\cf3 \
+\cf2 //                                rcduserinfo_.userId = _contactNotificationMsg.sourceUserId;\cf3 \
+\cf2 //                                NSString *imgUrl = dict1[@"user_img"];\cf3 \
+\cf2 //                                imgUrl = [Tool judgeNil:imgUrl];\cf3 \
+\cf2 //                                rcduserinfo_.portraitUri = imgUrl ;\cf3 \
+\cf2 //                                \cf3 \
+\cf2 //                                model.extend = rcduserinfo_;\cf3 \
+\cf2 //                                NSString *sourceid = _contactNotificationMsg.sourceUserId;\cf3 \
+\cf2 //                                sourceid = [Tool judgeNil:sourceid];\cf3 \
+\cf2 //                                NSString *message = _contactNotificationMsg.message;\cf3 \
+\cf2 //                                message = [Tool judgeNil:message];\cf3 \
+\cf2 //                                // local cache for userInfo\cf3 \
+\cf2 //                                NSDictionary *userinfoDic = @\{\cf3 \
+\cf2 //                                                              @"username" : rcduserinfo_.name,\cf3 \
+\cf2 //                                                              @"portraitUri" : rcduserinfo_.portraitUri,\cf3 \
+\cf2 //                                        @"status":@"2",\cf3 \
+\cf2 //                                        @"userid":sourceid,\cf3 \
+\cf2 //                                        @"message":message\cf3 \
+\cf2 //                                                              \};\cf3 \
+\cf2 //                                [[NSUserDefaults standardUserDefaults]\cf3 \
+\cf2 //                                 setObject:userinfoDic\cf3 \
+\cf2 //                                 forKey:_contactNotificationMsg.sourceUserId];\cf3 \
+\cf2 //                                [[NSUserDefaults standardUserDefaults] synchronize];\cf3 \
+\cf2 //                                \cf3 \
+\cf2 //                                [weakSelf.conversationListTableView\cf3 \
+\cf2 //                                 reloadRowsAtIndexPaths:@[ indexPath ]\cf3 \
+\cf2 //                                 withRowAnimation:\cf3 \
+\cf2 //                                 UITableViewRowAnimationAutomatic];\cf3 \
+\cf2 //                                \cf3 \
+\cf2 //                            \}\cf3 \
+\cf2 //\cf3 \
+\cf2 //                        \}\cf3 \
+\cf2 //                \} failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) \{\cf3 \
+\cf2 //                        \cf3 \
+\cf2 //                    \}];\cf3 \
+\cf2 //\cf3 \
+\cf2 //\cf3 \
+\cf2 //                \}\cf3 \
+\cf2 //            \}\cf3 \
+\cf2 //        \cf3 \
+\cf2 //    \} else \{\cf3 \
+\cf2 //        IMUserModel *user = (IMUserModel *)model.extend;\cf3 \
+\cf2 //        userName = user.name;\cf3 \
+\cf2 //        portraitUri = user.portraitUri;\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //    \cf3 \
+\cf2 //    RCDChatListCell *cell =\cf3 \
+\cf2 //    [[RCDChatListCell alloc] initWithStyle:UITableViewCellStyleDefault\cf3 \
+\cf2 //                           reuseIdentifier:@""];\cf3 \
+\cf2 //    cell.lblDetail.text =\cf3 \
+\cf2 //    [NSString stringWithFormat:@"
+\f1 \'c0\'b4\'d7\'d4
+\f0 %@
+\f1 \'b5\'c4\'ba\'c3\'d3\'d1\'c7\'eb\'c7\'f3
+\f0 ", userName];\cf3 \
+\cf2 //    [cell.ivAva sd_setImageWithURL:[NSURL URLWithString:portraitUri]\cf3 \
+\cf2 //                  placeholderImage:[UIImage imageNamed:@"contact"]];\cf3 \
+\cf2 //    cell.labelTime.text = [RCKitUtility ConvertMessageTime:model.sentTime/1000];\cf3 \
+\cf2 //    cell.model = model;\cf3 \
+\cf2 //    return cell;\cf3 \
+\cf2 //\}\cf3 \
+\
+\cf2 //*********************
+\f1 \'b2\'e5\'c8\'eb\'d7\'d4\'b6\'a8\'d2\'e5
+\f0 Cell*********************//\cf3 \
+\
+\
+-(\cf6 void\cf3 )response:(\cf8 NSNotification\cf3  *)n\
+\{\
+    \
+    \cf8 NSDictionary\cf3  *dict = [n \cf9 object\cf3 ];\
+    \cf6 if\cf3 (dict.\cf8 count\cf3  > \cf11 0\cf3 )\
+    \{\
+        \cf8 NSString\cf3  *str = [dict \cf9 objectForKey\cf3 :\cf5 @"login"\cf3 ];\
+        \cf8 NSArray\cf3  *msg = [dict \cf9 objectForKey\cf3 :\cf5 @"msg"\cf3 ];\
+        \cf6 if\cf3  ([str \cf9 isEqualToString\cf3 :\cf5 @"web"\cf3 ])\
+        \{\
+            \cf2 //        [self setUpKuangYeYi];\cf3 \
+            \cf2 //        [self refreshWeb];\cf3 \
+        \}\
+        \cf6 else\cf3  \cf6 if\cf3  ([str \cf9 isEqualToString\cf3 :\cf5 @"login"\cf3 ])\
+        \{\
+            \cf7 BgImgButton\cf3  *aBtn = [\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3  \cf9 viewWithTag\cf3 :\cf11 888\cf3 ];\
+            \cf6 if\cf3 (!aBtn)\
+            \{\
+                aBtn = [\cf6 self\cf3 .\cf8 tabBarController\cf3 .\cf8 view\cf3  \cf9 viewWithTag\cf3 :\cf11 654\cf3 ];\
+            \}\
+            \cf8 UIView\cf3  *redView = [aBtn \cf9 viewWithTag\cf3 :\cf11 777\cf3 ];\
+            \cf6 if\cf3 (msg.\cf8 count\cf3  > \cf11 0\cf3 )\
+            \{\
+                redView.\cf8 hidden\cf3  = \cf6 NO\cf3 ;\
+            \}\
+            \cf6 else\cf3 \
+            \{\
+                redView.\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+            \}\
+        \}\
+        \cf6 else\cf3 \
+        \{\
+            \cf6 static\cf3  \cf6 int\cf3  a = \cf11 0\cf3 ;\
+            \cf2 //   NSLog(@"base11111%d",a);\cf3 \
+            \cf2 //  NSLog(@"CONTROLLER%@",self);\cf3 \
+            a++;\
+            \cf2 //logo\cf3 \
+\cf4 #if KGOLD\
+\cf3             BgImgButton *lbtn = (BgImgButton *)[\cf6 self\cf3 .navigationController.navigationBar viewWithTag:\cf11 890\cf3 ];\
+            lbtn.bgImg = dict[\cf5 @"applogol"\cf3 ];\
+            \cf2 //
+\f1 \'cb\'d1\'cb\'f7
+\f0 \cf3 \
+            BgImgButton *sBtn = [\cf6 self\cf3 .navigationController.navigationBar viewWithTag:\cf11 889\cf3 ];\
+            sBtn.bgImg = dict[\cf5 @"seach"\cf3 ];\
+            \cf2 //
+\f1 \'bc\'d3\'ba\'c5
+\f0 \cf3 \
+            BgImgButton *aBtn = [\cf6 self\cf3 .navigationController.navigationBar viewWithTag:\cf11 888\cf3 ];\
+            aBtn.bgImg = dict[\cf5 @"pull"\cf3 ];\
+\cf4 #elif KMIN\
+\cf3             \cf7 BgImgButton\cf3  *lbtn = (\cf7 BgImgButton\cf3  *)[\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3  \cf9 viewWithTag\cf3 :\cf11 890\cf3 ];\
+            lbtn.\cf7 bgImg\cf3  = dict[\cf5 @"pull"\cf3 ];\
+            \cf2 //
+\f1 \'cb\'d1\'cb\'f7
+\f0 \cf3 \
+            \cf2 // BgImgButton *sBtn = [self.navigationController.navigationBar viewWithTag:889];\cf3 \
+            \cf2 // sBtn.bgImg = dict[@"seach"];\cf3 \
+            \cf2 //
+\f1 \'bc\'d3\'ba\'c5
+\f0 \cf3 \
+            \cf7 BgImgButton\cf3  *aBtn = [\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3  \cf9 viewWithTag\cf3 :\cf11 888\cf3 ];\
+            aBtn.\cf7 bgImg\cf3  = dict[\cf5 @"msgico"\cf3 ];\
+            \
+\cf4 #endif\
+\cf3         \}\
+    \}\
+\}\
+\cf4 #pragma -mark 
+\f1 \'b5\'af\'b3\'f6\'b2\'cb\'b5\'a5
+\f0 \
+\cf3 -(\cf6 void\cf3 )setUpTbView:(\cf8 UIButton\cf3  *)sender\
+\{\
+    \cf6 if\cf3 (!\cf7 tbView\cf3 )\
+    \{\
+        \cf7 bgView\cf3  = [[\cf8 UIView\cf3  \cf9 alloc\cf3 ]\cf9 initWithFrame\cf3 :\cf9 CGRectMake\cf3 (\cf11 0\cf3 , \cf11 0\cf3 , \cf4 width1\cf3 , \cf4 height1\cf3 )];\
+        \cf8 UITapGestureRecognizer\cf3  *tap = [[\cf8 UITapGestureRecognizer\cf3  \cf9 alloc\cf3 ]\cf9 initWithTarget\cf3 :\cf6 self\cf3  \cf9 action\cf3 :\cf6 @selector\cf3 (tapBg:)];\
+        tap.\cf8 delegate\cf3  = \cf6 self\cf3 ;\
+        [\cf7 bgView\cf3  \cf9 addGestureRecognizer\cf3 :tap];\
+        \cf2 /////////////////////////////////////////////\cf3 \
+        [\cf6 self\cf3 .\cf8 tabBarController\cf3 .\cf8 view\cf3  \cf9 insertSubview\cf3 :\cf7 bgView\cf3  \cf9 belowSubview\cf3 :sender];\
+        \cf7 tbView\cf3  = [[\cf7 ActSubTbVIew\cf3  \cf9 alloc\cf3 ]\cf9 initWithFrame\cf3 :\cf9 CGRectMake\cf3 (\cf4 width1\cf3 *\cf11 2\cf3 /\cf11 3\cf3 -\cf11 30\cf3 ,\cf11 20\cf3 +\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3 .\cf8 frame\cf3 .\cf8 size\cf3 .\cf8 height\cf3 , \cf4 width1\cf3 /\cf11 3\cf3 +\cf11 30\cf3 , \cf6 self\cf3 .\cf7 tbArr\cf3 .\cf8 count\cf3 *\cf11 44\cf3 ) \cf9 style\cf3 :\cf9 UITableViewStylePlain\cf3 ];\
+        \cf7 tbView\cf3 .\cf7 jumpDelegate\cf3  = \cf6 self\cf3 ;\
+        \cf7 tbView\cf3 .\cf7 tbArr\cf3  = \cf7 _tbArr\cf3 ;\
+        \cf7 tbView\cf3 .\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+        [\cf7 bgView\cf3  \cf9 addSubview\cf3 :\cf7 tbView\cf3 ];\
+        \
+    \}\
+    sender.\cf8 selected\cf3  = \cf6 YES\cf3 ;\
+    \cf8 CATransition\cf3  *animation = [\cf8 CATransition\cf3  \cf9 animation\cf3 ];\
+    animation.\cf8 duration\cf3  = \cf11 0.2f\cf3 ;\
+    animation.\cf8 timingFunction\cf3  = \cf9 UIViewAnimationCurveEaseInOut\cf3 ;\
+    animation.\cf8 fillMode\cf3 =  \cf8 kCATransitionFromRight\cf3 ;\
+    [\cf7 tbView\cf3 .\cf8 layer\cf3  \cf9 addAnimation\cf3 :animation \cf9 forKey\cf3 :\cf5 @"animation"\cf3 ];\
+    \cf7 bgView\cf3 .\cf8 hidden\cf3  = \cf6 NO\cf3 ;\
+    \cf7 tbView\cf3 .\cf8 hidden\cf3  = \cf6 NO\cf3 ;\
+    [\cf7 tbView\cf3  \cf9 reloadData\cf3 ];\
+    \
+    \
+\}\
+-(\cf6 void\cf3 )tapBg:(\cf8 UITapGestureRecognizer\cf3  *)tapGesture\
+\{\
+    tapGesture.\cf8 view\cf3 .\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+    \cf8 CATransition\cf3  *animation = [\cf8 CATransition\cf3  \cf9 animation\cf3 ];\
+    animation.\cf8 duration\cf3  = \cf11 0.2f\cf3 ;\
+    animation.\cf8 timingFunction\cf3  = \cf9 UIViewAnimationCurveEaseInOut\cf3 ;\
+    animation.\cf8 fillMode\cf3 =  \cf8 kCATransitionFromRight\cf3 ;\
+    animation.\cf8 subtype\cf3  = \cf8 kCATransitionReveal\cf3 ;\
+    [\cf7 tbView\cf3 .\cf8 layer\cf3  \cf9 addAnimation\cf3 :animation \cf9 forKey\cf3 :\cf5 @"animation"\cf3 ];\
+    \cf7 tbView\cf3 .\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+\}\
+\cf4 #pragma -mark JumpDelegate\
+\cf3 -(\cf6 void\cf3 )jumpTo:(\cf8 NSInteger\cf3 )tag\
+\{\
+    \cf6 if\cf3 (tag == \cf11 0\cf3 )\
+    \{\
+        \cf2 //
+\f1 \'cc\'ed\'bc\'d3
+\f0 \cf3 \
+        \cf7 IMSearchFriendViewController\cf3  *searchCV = [[\cf7 IMSearchFriendViewController\cf3  \cf9 alloc\cf3 ]\cf9 initWithNibName\cf3 :\cf5 @"IMSearchFriendViewController"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+        [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :searchCV \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+    \}\
+    \cf6 else\cf3  \cf6 if\cf3  (tag == \cf11 1\cf3 )\
+    \{\
+        \cf2 //
+\f1 \'cd\'a8\'d1\'b6\'c2\'bc
+\f0 \cf3 \
+        \cf7 AddressBookViewController\cf3  *addressVC = [[\cf7 AddressBookViewController\cf3  \cf9 alloc\cf3 ]\cf9 initWithNibName\cf3 :\cf5 @"AddressBookViewController"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+        [\cf6 self\cf3 .\cf8 navigationController\cf3  \cf9 pushViewController\cf3 :addressVC \cf9 animated\cf3 :\cf6 YES\cf3 ];\
+        \
+    \}\
+\}\
+-(\cf6 BOOL\cf3 )gestureRecognizer:(\cf8 UIGestureRecognizer\cf3  *)gestureRecognizer shouldReceiveTouch:(\cf8 UITouch\cf3  *)touch\
+\{\
+    \cf2 // NSLog(@"%@",[touch.view.superview class]);\cf3 \
+    \cf2 // NSLog(@"%@",[gestureRecognizer.view class]);\cf3 \
+    \cf2 //
+\f1 \'bd\'d8\'bb\'f1\'ca\'d6\'ca\'c6\'a3\'a8\'bd\'e2\'be\'f6\'ca\'d6\'ca\'c6\'b3\'e5\'cd\'bb\'ce\'ca\'cc\'e2\'a3\'a9
+\f0 \cf3 \
+    \cf6 if\cf3 ([touch.\cf8 view\cf3 .\cf8 superview\cf3  \cf9 isKindOfClass\cf3 :[\cf8 UITableViewCell\cf3  \cf9 class\cf3 ]])\
+    \{\
+        \cf6 return\cf3  \cf6 NO\cf3 ;\
+    \}\
+    \cf6 else\cf3 \
+    \{\
+        \cf6 return\cf3  \cf6 YES\cf3 ;\
+    \}\
+    \
+\}\
+\cf2 //#pragma -mark 
+\f1 \'cc\'e1\'cf\'d6\'b5\'c7\'c2\'bd
+\f0 \cf3 \
+\cf2 //-(void)tipLogin\cf3 \
+\cf2 //\{\cf3 \
+\cf2 //    if(!tipBgView)\cf3 \
+\cf2 //    \{\cf3 \
+\cf2 //        tipBgView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, width1, self.conversationListTableView.frame.size.height)];\cf3 \
+\cf2 //        tipBgView.backgroundColor = [RGB(250, 250, 250)colorWithAlphaComponent:0.9];\cf3 \
+\cf2 //        tipLabel = [[UILabel alloc]initWithFrame:CGRectMake(20, (height1-self.navigationController.navigationBar.bounds.size.height-StatuesHeight-self.tabBarController.tabBar.bounds.size.height)/2-50, width1-40, 40)];\cf3 \
+\cf2 //        tipLabel.textAlignment = NSTextAlignmentCenter;\cf3 \
+\cf2 //        tipLabel.textColor = RGB(100, 100, 100);\cf3 \
+\cf2 //        tipLabel.font = [UIFont systemFontOfSize:18];\cf3 \
+\cf2 //        tipLabel.text = ZGS(@"cartLog");\cf3 \
+\cf2 //        CGFloat tipLabelMaxY = CGRectGetMaxY(tipLabel.frame);\cf3 \
+\cf2 //        [tipBgView addSubview:tipLabel];\cf3 \
+\cf2 //        //
+\f1 \'b5\'c7\'c2\'bc\'b0\'b4\'c5\'a5
+\f0 \cf3 \
+\cf2 //        ImgButton *logBtn = [ImgButton buttonWithType:UIButtonTypeCustom];\cf3 \
+\cf2 //        logBtn.backgroundColor = MAINCOLOR;\cf3 \
+\cf2 //        logBtn.layer.cornerRadius = 1;\cf3 \
+\cf2 //        CGSize logSize =  [ZGS(@"gotoLog") getStringSize:[UIFont systemFontOfSize:17] width:width1];\cf3 \
+\cf2 //        logBtn.frame = CGRectMake((width1-logSize.width-16)/2, tipLabelMaxY+3, logSize.width+20, 35);\cf3 \
+\cf2 //        logBtn.layer.cornerRadius = 4;\cf3 \
+\cf2 //        [logBtn addTarget:self action:@selector(loginClick:) forControlEvents:UIControlEventTouchUpInside];\cf3 \
+\cf2 //        logBtn.title = ZGS(@"gotoLog");\cf3 \
+\cf2 //        logBtn.normalColor = [UIColor whiteColor];\cf3 \
+\cf2 //        [tipBgView addSubview:logBtn];\cf3 \
+\cf2 //        [self.view addSubview:tipBgView];\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //-(void)loginClick:(ImgButton *)sender\cf3 \
+\cf2 //\{\cf3 \
+\cf2 //    [self gotoLogin];\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //-(void)gotoLogin\cf3 \
+\cf2 //\{\cf3 \
+\cf2 //    Login1ViewController *login = [[Login1ViewController alloc]init];\cf3 \
+\cf2 //    [self.navigationController pushViewController:login animated:YES];\cf3 \
+\cf2 //\}\cf3 \
+\cf2 //#pragma -mark UIAlertViewDelegate\cf3 \
+\cf2 //-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex\cf3 \
+\cf2 //\{\cf3 \
+\cf2 //    if (buttonIndex == 1) \{\cf3 \
+\cf2 //        [self gotoLogin];\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //    else\cf3 \
+\cf2 //    \{\cf3 \
+\cf2 //        [self tipLogin];\cf3 \
+\cf2 //    \}\cf3 \
+\cf2 //\}\cf3 \
+- (\cf6 void\cf3 )didReceiveMemoryWarning \{\
+    [\cf6 super\cf3  \cf9 didReceiveMemoryWarning\cf3 ];\
+    \cf2 // Dispose of any resources that can be recreated.\cf3 \
+\}\
+\cf6 @end\cf3 \
+}
