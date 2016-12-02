@@ -650,5 +650,28 @@
     [\cf6 super\cf3  \cf9 didReceiveMemoryWarning\cf3 ];\
     \cf2 // Dispose of any resources that can be recreated.\cf3 \
 \}\
+\
+ \cf7 BgImgButton\cf3  *btn = (\cf7 BgImgButton\cf3  *)[\cf6 self\cf3 .\cf8 navigationController\cf3 .\cf8 navigationBar\cf3  \cf9 viewWithTag\cf3 :\cf11 888\cf3 ];\
+    btn.\cf8 hidden\cf3  = \cf6 YES\cf3 ;\
+    \cf2 //
+\f1 \'b5\'a5\'c1\'c4
+\f0 \cf3 \
+    \cf8 UIButton\cf3  *rightBtn = [\cf8 UIButton\cf3  \cf9 buttonWithType\cf3 :\cf9 UIButtonTypeCustom\cf3 ];\
+    rightBtn.\cf8 frame\cf3  = \cf9 CGRectMake\cf3 (\cf11 0\cf3 , \cf11 0\cf3 , \cf11 40\cf3 , \cf11 30\cf3 );\
+    [rightBtn \cf9 setTitle\cf3 :\cf5 @"
+\f1 \'cc\'ed\'bc\'d3
+\f0 "\cf3  \cf9 forState\cf3 :\cf9 UIControlStateNormal\cf3 ];\
+    [rightBtn \cf9 addTarget\cf3 :\cf6 self\cf3  \cf9 action\cf3 :\cf6 @selector\cf3 (rightClick:) \cf9 forControlEvents\cf3 :\cf9 UIControlEventTouchUpInside\cf3 ];\
+    \cf6 self\cf3 .\cf8 navigationItem\cf3 .\cf8 rightBarButtonItem\cf3  = [[\cf8 UIBarButtonItem\cf3  \cf9 alloc\cf3 ]\cf9 initWithCustomView\cf3 :rightBtn];\
+    \cf2 //
+\f1 \'d7\'a2\'b2\'e1
+\f0 cell\cf3 \
+    \cf8 UINib\cf3  *nib1 = [\cf8 UINib\cf3  \cf9 nibWithNibName\cf3 :\cf5 @"RCDChatListCell"\cf3  \cf9 bundle\cf3 :\cf6 nil\cf3 ];\
+    [\cf6 self\cf3 .\cf7 conversationListTableView\cf3  \cf9 registerNib\cf3 :nib1 \cf9 forCellReuseIdentifier\cf3 :\cf5 @"RCD1"\cf3 ];\
+    \cf6 self\cf3 .\cf7 tbArr\cf3  = \cf11 @[@\{\cf5 @"title"\cf3 :\cf5 @"
+\f1 \'cc\'ed\'bc\'d3
+\f0 "\cf3 ,\cf5 @"ico"\cf3 :\cf5 @""\cf11 \}\cf3 ,\cf11 @\{\cf5 @"title"\cf3 :\cf5 @"
+\f1 \'cd\'a8\'d1\'b6\'c2\'bc
+\f0 "\cf3 ,\cf5 @"ico"\cf3 :\cf5 @""\cf11 \}]\cf3 ;\
 \cf6 @end\cf3 \
 }
