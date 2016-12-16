@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11760" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11755"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="middleTextCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="340" height="95"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="340" height="95"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yzp-6e-msO">
+                        <rect key="frame" x="10" y="0.0" width="320" height="46"/>
+                        <color key="backgroundColor" red="0.94117647058823528" green="0.15686274509803921" blue="0.15686274509803921" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="46" id="v1f-zR-a53"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <state key="normal" title="删除并退出">
+                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="DeleCLick:" destination="gTV-IL-0wX" eventType="touchUpInside" id="jqY-Yj-YQN"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+            <color key="backgroundColor" red="0.91180288791656494" green="0.91177564859390259" blue="0.91179108619689941" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="yzp-6e-msO" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="10" id="52w-ph-yvH"/>
+                <constraint firstAttribute="trailing" secondItem="yzp-6e-msO" secondAttribute="trailing" constant="10" id="gmg-vY-MhN"/>
+                <constraint firstItem="yzp-6e-msO" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="sCP-U0-23N"/>
+            </constraints>
+            <size key="customSize" width="340" height="95"/>
+            <connections>
+                <outlet property="deleAndLogout" destination="yzp-6e-msO" id="Wn7-LK-FrQ"/>
+            </connections>
+            <point key="canvasLocation" x="271" y="277.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

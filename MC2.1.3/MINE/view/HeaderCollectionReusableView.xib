@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="U6b-Vx-4bR" customClass="HeaderCollectionReusableView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="35"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iOP-pS-hZN">
+                    <rect key="frame" x="10" y="14" width="121" height="16"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="121" id="OLt-oP-xLc"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" red="0.47843137254901957" green="0.47450980392156861" blue="0.49803921568627452" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9JZ-z9-1TW" customClass="ImgButton">
+                    <rect key="frame" x="251" y="5" width="50" height="35"/>
+                    <color key="backgroundColor" red="0.14117647059999999" green="0.61568627450000002" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="50" id="FlQ-KY-RGE"/>
+                        <constraint firstAttribute="height" constant="35" id="yba-qF-i1J"/>
+                    </constraints>
+                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <state key="normal" title="管理">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" title="完成"/>
+                    <connections>
+                        <action selector="edit:" destination="U6b-Vx-4bR" eventType="touchUpInside" id="OXF-a1-wC4"/>
+                    </connections>
+                </button>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="9JZ-z9-1TW" secondAttribute="trailing" constant="19" id="AUn-nR-4yF"/>
+                <constraint firstItem="iOP-pS-hZN" firstAttribute="leading" secondItem="U6b-Vx-4bR" secondAttribute="leading" constant="10" id="ET5-VO-4wn"/>
+                <constraint firstAttribute="bottom" secondItem="iOP-pS-hZN" secondAttribute="bottom" constant="5" id="M2l-QH-fFG"/>
+                <constraint firstItem="iOP-pS-hZN" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="Puh-Ce-Q4g"/>
+                <constraint firstItem="9JZ-z9-1TW" firstAttribute="centerY" secondItem="iOP-pS-hZN" secondAttribute="centerY" id="q4t-gn-eQT"/>
+            </constraints>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="Puh-Ce-Q4g"/>
+                </mask>
+            </variation>
+            <connections>
+                <outlet property="editBtn" destination="9JZ-z9-1TW" id="8W7-Ss-94N"/>
+                <outlet property="title" destination="iOP-pS-hZN" id="ZTr-re-pbm"/>
+            </connections>
+            <point key="canvasLocation" x="140" y="276"/>
+        </collectionReusableView>
+    </objects>
+</document>

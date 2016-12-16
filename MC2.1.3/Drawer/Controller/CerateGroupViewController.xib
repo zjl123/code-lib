@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11760" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11755"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CerateGroupViewController">
+            <connections>
+                <outlet property="imgView" destination="jnj-29-ZWp" id="JbH-qE-AqE"/>
+                <outlet property="nameField" destination="F2A-j6-d6l" id="dlT-VF-uY2"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="F2A-j6-d6l">
+                    <rect key="frame" x="115.5" y="222" width="144" height="30"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="30" id="NIT-2p-Sgh"/>
+                        <constraint firstAttribute="width" constant="97" id="PkA-Lb-lc8"/>
+                        <constraint firstAttribute="width" constant="144" id="buX-HR-5YL"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="PkA-Lb-lc8"/>
+                        </mask>
+                    </variation>
+                </textField>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gCO-Er-yBa">
+                    <rect key="frame" x="102.5" y="253" width="170" height="1"/>
+                    <color key="backgroundColor" red="0.0" green="0.6470588235294118" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="4fg-33-FGp"/>
+                        <constraint firstAttribute="width" constant="170" id="b1U-Ip-6pj"/>
+                    </constraints>
+                </view>
+                <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddPhotoDefault" translatesAutoresizingMaskIntoConstraints="NO" id="jnj-29-ZWp">
+                    <rect key="frame" x="152.5" y="102" width="70" height="70"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="70" id="MJ8-4c-lvN"/>
+                        <constraint firstAttribute="height" constant="70" id="vff-6P-YeD"/>
+                    </constraints>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="F2A-j6-d6l" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="7Eo-yo-lTd"/>
+                <constraint firstItem="gCO-Er-yBa" firstAttribute="centerX" secondItem="F2A-j6-d6l" secondAttribute="centerX" id="Aft-Ho-ILG"/>
+                <constraint firstItem="jnj-29-ZWp" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="C42-Mm-KGb"/>
+                <constraint firstItem="F2A-j6-d6l" firstAttribute="top" secondItem="jnj-29-ZWp" secondAttribute="bottom" constant="50" id="EN6-Dn-tcF"/>
+                <constraint firstItem="jnj-29-ZWp" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="102" id="LOI-LN-g4m"/>
+                <constraint firstItem="gCO-Er-yBa" firstAttribute="top" secondItem="F2A-j6-d6l" secondAttribute="bottom" constant="1" id="Rey-En-LqI"/>
+                <constraint firstItem="F2A-j6-d6l" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="100" id="Xk9-kX-k7c"/>
+            </constraints>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="Xk9-kX-k7c"/>
+                </mask>
+            </variation>
+        </view>
+    </objects>
+    <resources>
+        <image name="AddPhotoDefault" width="70" height="70"/>
+    </resources>
+</document>

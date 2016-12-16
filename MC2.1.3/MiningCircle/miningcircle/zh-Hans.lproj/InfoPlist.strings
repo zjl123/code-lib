@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  MiningCircle
+
+  Created by ql on 15/10/29.
+  Copyright © 2015年 zjl. All rights reserved.
+*/
+CFBundleDisplayName="矿业圈";
+CFBundleGetInfoString = "您的位置信息将用于显示您所在的城市";

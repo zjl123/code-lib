@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11760" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11755"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IMAddFirendViewController">
+            <connections>
+                <outlet property="AddFriendBtn" destination="D11-qF-CXV" id="cPx-Fq-0VQ"/>
+                <outlet property="conversationBtn" destination="MdY-AC-eAx" id="K84-jf-DSs"/>
+                <outlet property="headPoratial" destination="ych-a0-1tp" id="G5G-Lk-FQt"/>
+                <outlet property="name" destination="phc-xL-OEQ" id="3kA-cS-DNR"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleAspectFit" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AvO-Vq-Wua">
+                    <rect key="frame" x="0.0" y="30" width="375" height="88"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ych-a0-1tp">
+                            <rect key="frame" x="15" y="14" width="60" height="60"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="60" id="9ud-Oh-cVI"/>
+                                <constraint firstAttribute="height" constant="60" id="XV4-v1-Qb6"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="phc-xL-OEQ">
+                            <rect key="frame" x="93" y="33" width="42" height="21"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="88" id="5Td-rk-92M"/>
+                        <constraint firstItem="ych-a0-1tp" firstAttribute="leading" secondItem="AvO-Vq-Wua" secondAttribute="leading" constant="15" id="8HK-Am-INY"/>
+                        <constraint firstItem="phc-xL-OEQ" firstAttribute="centerY" secondItem="ych-a0-1tp" secondAttribute="centerY" id="MQy-Zf-4Ir"/>
+                        <constraint firstItem="ych-a0-1tp" firstAttribute="centerY" secondItem="AvO-Vq-Wua" secondAttribute="centerY" id="lOK-ZD-0m3"/>
+                        <constraint firstItem="phc-xL-OEQ" firstAttribute="leading" secondItem="ych-a0-1tp" secondAttribute="trailing" constant="18" id="lnw-kT-jSU"/>
+                        <constraint firstAttribute="height" constant="88" id="s2a-4C-jDj"/>
+                    </constraints>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D11-qF-CXV">
+                    <rect key="frame" x="15" y="150" width="345" height="42"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="42" id="hak-zk-TES"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                    <state key="normal" title="添加好友">
+                        <color key="titleColor" red="0.96546226739883423" green="0.96543341875076294" blue="0.96544981002807617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="AddFriend:" destination="-1" eventType="touchUpInside" id="qTL-lR-z9l"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MdY-AC-eAx">
+                    <rect key="frame" x="15" y="224" width="345" height="42"/>
+                    <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="42" id="c8i-OE-wUf"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                    <state key="normal" title="发起会话">
+                        <color key="titleColor" red="0.96546226739883423" green="0.96543341875076294" blue="0.96544981002807617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="Conversation:" destination="-1" eventType="touchUpInside" id="DxY-ku-4G5"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="0.96546226739883423" green="0.96543341875076294" blue="0.96544981002807617" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="D11-qF-CXV" firstAttribute="top" secondItem="AvO-Vq-Wua" secondAttribute="bottom" constant="32" id="3vr-6Z-SO5"/>
+                <constraint firstAttribute="trailing" secondItem="D11-qF-CXV" secondAttribute="trailing" constant="15" id="G9z-af-HFO"/>
+                <constraint firstItem="D11-qF-CXV" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="KZq-s4-mNO"/>
+                <constraint firstAttribute="trailing" secondItem="MdY-AC-eAx" secondAttribute="trailing" constant="15" id="Ov5-s3-1Zg"/>
+                <constraint firstItem="AvO-Vq-Wua" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="cjs-Hb-Zpp"/>
+                <constraint firstAttribute="trailing" secondItem="AvO-Vq-Wua" secondAttribute="trailing" id="qIa-x6-txW"/>
+                <constraint firstItem="AvO-Vq-Wua" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="30" id="rrl-Pa-2hF"/>
+                <constraint firstItem="MdY-AC-eAx" firstAttribute="top" secondItem="D11-qF-CXV" secondAttribute="bottom" constant="32" id="wI5-L6-nZz"/>
+                <constraint firstItem="MdY-AC-eAx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="15" id="wdx-h0-Cu3"/>
+            </constraints>
+        </view>
+    </objects>
+</document>
