@@ -24,7 +24,7 @@
 #import "NSString+Exten.h"
 #import <CoreLocation/CoreLocation.h>
 #import "IMRCChatViewController.h"
-@interface BaseViewController ()<UIWebViewDelegate,UIWebViewDelegate,UIAlertViewDelegate,SearchDelegate,CLLocationManagerDelegate>
+@interface BaseViewController ()<UIWebViewDelegate,UIWebViewDelegate,UIAlertViewDelegate,SearchDelegate,CLLocationManagerDelegate,UIGestureRecognizerDelegate>
 {
     UILabel *errorLabel;
     UIButton *reloadBtn;
@@ -47,6 +47,7 @@
     if(self)
     {
         [[NSNotificationCenter defaultCenter]removeObserver:self];
+        
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(response:) name:@"isLogin" object:nil];
     }
     return self;
@@ -54,10 +55,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-//    [[NSNotificationCenter defaultCenter]removeObserver:self];
-//    
-//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(response:) name:@"isLogin" object:nil];
-
+  
+     self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    self.navigationController.navigationBar.topItem.title = @"";
     self.isRefresh = NO;
     web = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, width1, height1-self.navigationController.navigationBar.frame.size.height-self.tabBarController.tabBar.frame.size.height-StatuesHeight-TABANOHEIGHT+12)];
     web.scrollView.showsVerticalScrollIndicator = NO;
@@ -457,7 +457,7 @@
     else
     {
         static int a = 0;
-      //  NSLog(@"base11111%d",a);
+     //   NSLog(@"base11111%d",a);
       //  NSLog(@"CONTROLLER%@",self);
         a++;
         //logo
@@ -473,11 +473,32 @@
 #elif KMIN
         BgImgButton *lbtn = (BgImgButton *)[self.navigationController.navigationBar viewWithTag:890];
         lbtn.bgImg = dict[@"pull"];
+        //搜索
+       // BgImgButton *sBtn = [self.navigationController.navigationBar viewWithTag:889];
+       // sBtn.bgImg = dict[@"seach"];
         //加号
         BgImgButton *aBtn = [self.navigationController.navigationBar viewWithTag:888];
         aBtn.bgImg = dict[@"msgico"];
 
 #endif
+        
+        
+        
+        
+      //  NSUserDefaults *userDefault = [NSUserDefaults new];
+//        NSInteger num = [userDefault integerForKey:@"login"];
+//        if(num == 1)
+//        {
+//            BgImgButton *btn = (BgImgButton *)self.navigationItem.rightBarButtonItem.customView;
+//            btn.bgImg = dict[@"tabbar_my_bg"];
+//            
+//        }
+//        else
+//        {
+//            BgImgButton *btn = (BgImgButton *)self.navigationItem.rightBarButtonItem.customView;
+//            btn.bgImg = dict[@"user_out"];
+//        }
+
     }
     }
 }

@@ -78,7 +78,7 @@
     NSURL *url = [NSURL URLWithString:_info[@"userImg"]];
     [self.imgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"test"]];
     NSString *name = [_info objectForKey:@"userName"];
-    if(name.length == 0 ||name == NULL)
+    if(name.length == 0)
     {
         NSUserDefaults *userDefault = [NSUserDefaults new];
         name = [userDefault objectForKey:@"logName"];

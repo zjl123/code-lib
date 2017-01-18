@@ -15,7 +15,7 @@
 //#define newHeight 100.0f
 //#define isOpen @"85.0f"
 #import "ImgButton.h"
-@interface MsgListViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface MsgListViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
 {
     NSMutableArray *cellArr;
     CGFloat cellHeight;
@@ -42,6 +42,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
     //编辑按钮
     ImgButton *btn = [ImgButton buttonWithType:UIButtonTypeCustom];
     //btn.titleLabel.font = [UIFont systemFontOfSize:17];

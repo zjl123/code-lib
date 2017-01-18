@@ -53,6 +53,7 @@
 
     [_login setTitle:ZGS(@"login") forState:UIControlStateNormal];
     [_registerBtn setTitle:ZGS(@"register") forState:UIControlStateNormal];
+   // _registerBtn.titleLabel.contentMode = UIViewContentModeRight;
     [_forgetPwdBtn setTitle:ZGS(@"ForgotPassWord") forState:UIControlStateNormal];
     _userName.tag =400;
     _password.tag = 401;
@@ -82,7 +83,18 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapRemindPwd:)];
     self.remindPwdLabel.userInteractionEnabled = YES;
     [self.remindPwdLabel addGestureRecognizer:tap];
+    
+    
+    //通知
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+//     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
+//-(void)viewWillDisappear:(BOOL)animated
+//{
+//    [super viewWillDisappear:animated];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+//}
 -(NSString *)getPassword
 {
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
@@ -427,4 +439,29 @@
 
     
 }
+//-(void)keyboardWillShow:(NSNotification *)aNotification
+//{
+//    NSDictionary *dict = aNotification.userInfo;
+//    NSValue *value = [dict objectForKey:UIKeyboardFrameEndUserInfoKey];
+//    CGRect keyboardRect = [value CGRectValue];
+//    double h = keyboardRect.size.height;
+//    double duration = [[dict objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+//    [UIView animateWithDuration:duration animations:^{
+//        CGRect rect = self.view.frame;
+//        rect.origin.y = -h;
+//        self.view.frame = rect;
+//    }];
+//    
+//}
+//-(void)keyboardWillHidden:(NSNotification *)aNotification
+//{
+//    NSDictionary *dict = aNotification.userInfo;
+//    double duration = [[dict objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+//    [UIView animateWithDuration:duration animations:^{
+//        CGRect rect = self.view.frame;
+//        rect.origin.y = 0;
+//        self.view.frame = rect;
+//    }];
+//    
+//}
 @end

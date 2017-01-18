@@ -19,8 +19,8 @@
 #import "GreyView.h"
 #import "FGLanguageTool.h"
 #import "LanguageViewController.h"
-#import <RongIMKit/RongIMKit.h>
 #import "ActiveViewController.h"
+#import "SearchView.h"
 @interface MySettingCell:UITableViewCell <UIAlertViewDelegate>
 @property (nonatomic,strong) UILabel *name;
 @property (nonatomic,strong) UIImageView *imgView;
@@ -66,6 +66,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = ZGS(@"setting");
+    
     //修改标题颜色
    // [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
     self.settingnames =@[@[ZGS(@"alertPhoto")],@[ZGS(@"logPwd"),ZGS(@"fundPwd"),ZGS(@"gesture")],@[ZGS(@"feedback"),ZGS(@"language"),ZGS(@"clearCach")]];
@@ -77,6 +78,13 @@
     [self.view addSubview:self.tb];
    // [self initIM];
     
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
+    searchView.hidden = YES;
+
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 

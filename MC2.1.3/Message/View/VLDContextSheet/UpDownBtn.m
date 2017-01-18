@@ -4,7 +4,7 @@
 //
 //  Created by ql on 16/5/11.
 //  Copyright © 2016年 zjl. All rights reserved.
-// 中间一张小图（单图，改变了图的大小）
+// 中间一张小图（单图，改变了图的大小，已经不是上下结构了）
 
 #import "UpDownBtn.h"
 #import "UIButton+WebCache.h"

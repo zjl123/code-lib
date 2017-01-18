@@ -112,18 +112,6 @@
         }
 
     }];
-    
-    
-//    [manager GET:getUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//        NSLog(@"dict%@",dict);
-//        
-//            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

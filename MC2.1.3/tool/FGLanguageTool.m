@@ -71,7 +71,7 @@ static FGLanguageTool *shareModel;
 
 -(NSString *)getStringForKey:(NSString *)key
 {
-   // NSLog(@"444");
+    //NSLog(@"%@",self.bundle);
     if(self.bundle)
     {
         return NSLocalizedStringFromTableInBundle(key, TABLE, self.bundle, @"");
@@ -128,5 +128,4 @@ static FGLanguageTool *shareModel;
     appDelegate.window.rootViewController = nav;
     
 }
-
 @end

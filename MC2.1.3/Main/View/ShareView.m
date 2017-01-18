@@ -12,8 +12,7 @@
 #import <Social/Social.h>
 #import "WXApi.h"
 #import <TencentOpenAPI/QQApiInterface.h>
-//#import <ShareSDKUI/SSUIShareActionSheetStyle.h>
-//#import <ShareSDKUI/SSUIEditorViewStyle.h>
+
 #import "ShareCollectionview.h"
 @implementation ShareView
 {
@@ -28,16 +27,6 @@
     // Drawing code
 }
 */
-//-(instancetype)init
-//{
-//    self = [super init];
-//    if(self)
-//    {
-//        self.backgroundColor = [UIColor yellowColor];
-//        
-//    }
-//    return self;
-//}
 -(instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];

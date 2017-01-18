@@ -24,16 +24,13 @@
     [self.tableView registerNib:nib forCellReuseIdentifier:@"mobileContact"];
     
 }
-//-(void)
 -(void)postFromMobileContact
 {
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *userId = [DEFAULT objectForKey:@"userid"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findUserByPhone&userId=%@",MAINURL,userId];
     NSDictionary *paramers = @{@"phoneNums":self.firstArr};
     [[DataManager shareInstance]ConnectServer:getUrl parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
         NSArray *arr = resultBlock[@"listPhone"];
-        NSLog(@"^^^^^%@",arr);
         if(arr.count > 0)
         {
             [self getNewDate:arr];

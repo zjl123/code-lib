@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface AddressBookViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface AddressBookViewController : BackButtonViewController
 
 @end

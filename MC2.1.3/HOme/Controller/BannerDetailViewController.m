@@ -37,15 +37,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationController.navigationBarHidden = NO;
+    self.view.backgroundColor = [UIColor redColor];
 #if KMIN
     shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareBtn setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
- //   shareBtn.backgroundColor = [UIColor yellowColor];
-   // [shareBtn setImage:[UIImage imageNamed:@"share"] forState:UIControlStateHighlighted];
+    //   shareBtn.backgroundColor = [UIColor yellowColor];
+    // [shareBtn setImage:[UIImage imageNamed:@"share"] forState:UIControlStateHighlighted];
     shareBtn.frame = CGRectMake(width1-59.5, 2, 44.5, 40);
     shareBtn.imageEdgeInsets = UIEdgeInsetsMake(2, 8.5, 2, 0);
-  //  shareBtn.imageView.backgroundColor = [UIColor greenColor];
-   // shareBtn.backgroundColor = [UIColor yellowColor];
+    //  shareBtn.imageView.backgroundColor = [UIColor greenColor];
+    // shareBtn.backgroundColor = [UIColor yellowColor];
     shareBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
     shareBtn.hidden = YES;
     [self.navigationController.navigationBar addSubview:shareBtn];
@@ -53,7 +54,7 @@
     
 #endif
     NSString *lg = [Tool getPreferredLanguage];
-//uap必须要拼到链接尾部
+    //uap必须要拼到链接尾部
     if ([_herfStr rangeOfString:@"?"].location != NSNotFound) {
         _herfStr = [NSString stringWithFormat:@"%@&lg=%@&uap=iOS",_herfStr,lg];
     }
@@ -62,7 +63,7 @@
         _herfStr = [NSString stringWithFormat:@"%@?&lg=%@&uap=iOS",_herfStr,lg];
     }
     _herfStr = [_herfStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   // _herfStr = @"http://192.168.1.105/MiningCircle/im.do?index&uap=00";
+    // _herfStr = @"http://192.168.1.105/MiningCircle/im.do?index&uap=00";
     
     [self loadWeb];
     
@@ -80,23 +81,23 @@
     }
     isRefresh = NO;
     // Do any additional setup after loading the view.
-   // [self pay];
+    // [self pay];
 }
 -(void)shareClick:(UIButton *)sender
 {
     
     
-   NSString *img = [web metaContent:@"sharePic"];
+    NSString *img = [web metaContent:@"sharePic"];
     if(img.length == 0)
     {
         img = @"shareimgae";
     }
-     NSString *title = [web metaContent:@"shareTitle"];
+    NSString *title = [web metaContent:@"shareTitle"];
     if(title.length == 0)
     {
         title = ZGS(@"KYQ");
     }
-     NSString *content = [web metaContent:@"shareDesc"];
+    NSString *content = [web metaContent:@"shareDesc"];
     if(content.length == 0)
     {
         content = [web pageTitle];
@@ -113,8 +114,8 @@
     }
     if(urlStr.length > 0)
     {
-            NSArray *arr = @[@"download",@{@"title":title,@"content":content,@"img":img,@"url":urlStr}];
-        [self share:arr];        
+        NSArray *arr = @[@"download",@{@"title":title,@"content":content,@"img":img,@"url":urlStr}];
+        [self share:arr];
     }
 }
 -(void)jumpSearch
@@ -132,30 +133,31 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-  //  shareBtn.hidden = NO;
+    //  shareBtn.hidden = NO;
     SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
     if(searchView)
     {
         searchView.hidden = isHidden;
     }
-//#if KGOLD
+    //#if KGOLD
     if(isRefresh == YES)
     {
         [self loadWeb];
         isRefresh = NO;
     }
-//#endif
+    //#endif
     //加字段
     
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    
     shareBtn.hidden = YES;
 }
 -(void)share:(NSArray *)parames
 {
-     ShareView *shareView = [[ShareView alloc]initWithFrame:CGRectMake(0, 0, width1, height1)];
+    ShareView *shareView = [[ShareView alloc]initWithFrame:CGRectMake(0, 0, width1, height1)];
     [shareView share:parames controller:self];
     [self.navigationController.view addSubview:shareView];
 }
@@ -187,7 +189,7 @@
 {
     NSURL *url = request.URL;
     NSString *strUrl = url.absoluteString;
-  
+    
     if([strUrl rangeOfString:@"s=s"].location != NSNotFound)
     {
         shareBtn.hidden = NO;
@@ -215,27 +217,27 @@
         if([strUrl rangeOfString:@"loginui"].location != NSNotFound)
         {
             UIAlertView *alter = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"unLog") delegate:self cancelButtonTitle:ZGS(@"cancle") otherButtonTitles:ZGS(@"login"), nil];
-                [alter show];
+            [alter show];
             alter.tag = 599;
-                [web stopLoading];
+            [web stopLoading];
         }
-       else if([strUrl rangeOfString:@"call_appui=user_center"].location != NSNotFound)
+        else if([strUrl rangeOfString:@"call_appui=user_center"].location != NSNotFound)
         {
-             [self.navigationController popViewControllerAnimated:YES];
+            [self.navigationController popViewControllerAnimated:YES];
             return NO;
         }
-       else if([strUrl rangeOfString:@"call_appui=back"].location != NSNotFound)
-       {
-           if([webView canGoBack])
-           {
-               [webView goBack];
-           }
-           else
-           {
-               [self.navigationController popViewControllerAnimated:YES];
-           }
-           return NO;
-       }
+        else if([strUrl rangeOfString:@"call_appui=back"].location != NSNotFound)
+        {
+            if([webView canGoBack])
+            {
+                [webView goBack];
+            }
+            else
+            {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            return NO;
+        }
         else if ([strUrl rangeOfString:@"&bank_pay=alipay"].location != NSNotFound)
         {
             NSLog(@"paypaypay");
@@ -261,7 +263,7 @@
 -(void)jumpToConversation:(NSString *)str
 {
     str = [str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   // NSLog(@"sssss");
+    // NSLog(@"sssss");
     NSCharacterSet *character = [NSCharacterSet characterSetWithCharactersInString:@"&="];
     NSArray *stringArr = [str componentsSeparatedByCharactersInSet:character];
     NSString *name = stringArr.lastObject;
@@ -312,14 +314,14 @@
             NSURL *url = [NSURL URLWithString:self.herfStr];
             NSURLRequest *reqest = [NSURLRequest requestWithURL:url];
             [web loadRequest:reqest];
-
+            
         }
     }
     else if (alertView.tag == 599)
     {
         if (buttonIndex == 1) {
             Login1ViewController *login = [[Login1ViewController alloc]init];
-             SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
+            SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
             searchView.hidden = YES;
             isRefresh = YES;
             [self.navigationController pushViewController:login animated:YES];
@@ -342,7 +344,7 @@
 -(void)pay:(NSString *)str
 
 {   NSString *appScheme = @"miningcircle";
-   // str = @"http://bg.miningcircle.com/MiningCircle/appproxy.do?orderDetail";
+    // str = @"http://bg.miningcircle.com/MiningCircle/appproxy.do?orderDetail";
     
     AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     
@@ -351,7 +353,7 @@
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-       // NSLog(@".....%@",dict);
+        // NSLog(@".....%@",dict);
         NSString *info = [NSString stringWithFormat:@"%@",dict[@"info"]];
         NSLog(@"%@",info);
         [[AlipaySDK defaultService] payOrder:info fromScheme:appScheme callback:^(NSDictionary *resultDic) {
@@ -359,13 +361,13 @@
             NSLog(@"reslutMMMMMM = %@",resultDic);
         }];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-       
+        
     }];
-//    [manager POST:str parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        
-//    }];
+    //    [manager POST:str parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    //
+    //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    //
+    //    }];
     
 }
 #endif

@@ -50,8 +50,15 @@
     [self.navigationBar setBarTintColor:BLUECOLOR];
     //导航栏上的字的颜色
       [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    
+    self.navigationBar.topItem.title = @"";
     self.interactivePopGestureRecognizer.delegate = self;
+
+  //  id target = self.interactivePopGestureRecognizer.delegate;
+  //  UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc]initWithTarget:target action:@selector(handleNavigationTransition:)];
+  //  pan.delegate = self;
+    
+  //  [self.view addGestureRecognizer:pan];
+  //  self.interactivePopGestureRecognizer.enabled = NO;
     
     
     [self.navigationBar setTintColor:[UIColor whiteColor]];
@@ -69,6 +76,10 @@
     [super viewWillDisappear:animated];
     bgView.hidden = YES;
 }
+//-(void)handleNavigationTransition:(UIPanGestureRecognizer *)pan
+//{
+//    [self popViewControllerAnimated:YES];
+//}
 //nav上的加号。
 -(void)setUpAdd
 {
@@ -231,6 +242,7 @@
 -(void)tapBg:(UITapGestureRecognizer *)tapGesture
 {
     tapGesture.view.hidden = YES;
+  //  bgView.hidden = YES;
     CATransition *animation = [CATransition animation];
     animation.duration = 0.2f;
     animation.timingFunction = UIViewAnimationCurveEaseInOut;
@@ -239,10 +251,10 @@
     [_tbView.layer addAnimation:animation forKey:@"animation"];
     _tbView.hidden = YES;
 }
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+/*
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    //截获手势（解决手势冲突问题）
-    if([touch.view.superview isKindOfClass:[UITableViewCell class]])
+    if(self.childViewControllers.count == 1)
     {
         return NO;
     }
@@ -250,7 +262,26 @@
     {
         return YES;
     }
-    
+}
+ */
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if(self.viewControllers.count > 1)
+    {
+        return YES;
+    }
+    else
+    {
+        //截获手势（解决手势冲突问题）
+        if([touch.view.superview isKindOfClass:[UITableViewCell class]])
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -449,6 +480,7 @@
         {
             if([resultBlock count] > 0 && [[resultBlock objectForKey:@"ret"] intValue] == 0)
             {
+                
                 [[RCIM sharedRCIM] disconnect:YES];
                 UIAlertView *av=[[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"logoutSuc") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
                 [av show];
@@ -483,22 +515,6 @@
 
     }];
     
-//    NSDictionary *params = [PwdEdite ecoding:dict];
-//    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-//    [manager POST:STRURL parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        if(dict != nil)
-//        {
-//            NSDictionary *result = [PwdEdite decoding:dict];
-//                    }
-//
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"exception") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-//        [alert show];
-// 
-//    }];
 }
 -(void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {

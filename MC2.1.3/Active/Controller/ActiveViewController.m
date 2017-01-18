@@ -19,7 +19,7 @@
 #import "RCDChatListCell.h"
 #import "IMUserModel.h"
 #import "NewFriendsViewController.h"
-#import "MNDataBaseManager.h"
+//#import "MNDataBaseManager.h"
 #import "AddTableViewCell.h"
 #import "ActSubTbVIew.h"
 #import "AddressBookViewController.h"

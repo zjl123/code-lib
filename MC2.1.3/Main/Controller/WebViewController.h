@@ -11,7 +11,8 @@
 #import "GreyView.h"
 #import "ActivityView.h"
 #import "SearchView.h"
-@interface WebViewController : UIViewController
+#import <WebKit/WebKit.h>
+@interface WebViewController : UIViewController<UIWebViewDelegate>
 {
     UIWebView *web;
     NSString *strurl;

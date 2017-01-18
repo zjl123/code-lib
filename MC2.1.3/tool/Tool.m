@@ -7,14 +7,26 @@
 //
 
 #import "Tool.h"
+#import <AVFoundation/AVFoundation.h>
 #import <AddressBook/AddressBook.h>
 #import "PwdEdite.h"
 #import "DataManager.h"
 #import <ShareSDK/ShareSDK.h>
 #import <ShareSDKUI/ShareSDKUI.h>
+#import "NSString+Exten.h"
 //#import <ShareSDKUI//ShareSDK+SSUI.h>
 
 @implementation Tool
+
++(Tool *)shareInstance
+{
+    static Tool *_instance;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _instance = [[Tool alloc]init];
+    });
+    return _instance;
+}
 /*
  *网络图片转化为图片
  */
@@ -49,39 +61,60 @@
     }
 }
 //#pragma -mark 获得通讯录
-+(NSMutableArray *)getAddressBook
+-(void)getAddressBook:(void(^)(NSArray * addressArray))addressBlock
 {
+   /*
+    NSString * mediaType = AVMediaTypeVideo;
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+    if(authStatus == AVAuthorizationStatusRestricted)
+    {
+        NSLog(@"AVAuthorizationStatusRestricted");
+    }
+    else if (authStatus == AVAuthorizationStatusAuthorized)
+    {
+        NSLog(@"AVAuthorizationStatusAuthorized");
+    }
+    */
+    
     //获得本地通讯录名柄
-    NSMutableArray *mutArr = [NSMutableArray array];
+   // NSMutableArray *mutArr = [NSMutableArray array];
     ABAddressBookRef addressBook = nil;
     if([[UIDevice currentDevice].systemVersion floatValue]>= 6.0)
     {
         addressBook = ABAddressBookCreateWithOptions(NULL, NULL);
-        dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+      //  dispatch_semaphore_t sema = dispatch_semaphore_create(0);
         ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
-            dispatch_semaphore_signal(sema);
+          //  dispatch_semaphore_signal(sema);
+            
+            if(granted)
+            {
+                NSArray *arr = [self getAddress:addressBook];
+                addressBlock(arr);
+            }
+            else
+            {
+                addressBlock(nil);
+            }
         });
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW);
+       // dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW);
     }
-    else
-    {
-        addressBook = ABAddressBookCreate();
-    }
-    if(addressBook == nil)
-    {
-        return mutArr;
-    }
-    else
-    {
+   else
+   {
+       addressBlock(nil);
+   }
+}
+-(NSArray *)getAddress:(ABAddressBookRef)addressBook
+{
+    NSMutableArray *mutArr = [NSMutableArray array];
     //取得本地所有联系人记录
     NSArray *tmpPeoples = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBook);
     for (id tmpPerson in tmpPeoples) {
         ABMultiValueRef tmpPhones = ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonPhoneProperty);
-         int count = (int)ABMultiValueGetCount(tmpPhones);
+        int count = (int)ABMultiValueGetCount(tmpPhones);
         for (int i = 0; i < count; i++) {
             NSString *tmpPhoneIndex = (__bridge NSString *)ABMultiValueCopyValueAtIndex(tmpPhones, i);
             //移除所有非数字的字符
-           NSString * str4 = [tmpPhoneIndex stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, tmpPhoneIndex.length)];
+            NSString * str4 = [tmpPhoneIndex stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, tmpPhoneIndex.length)];
             
             NSString *firstName = (__bridge NSString *)(ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonFirstNameProperty));
             NSString *lastName = (__bridge NSString *)(ABRecordCopyValue((__bridge ABRecordRef)(tmpPerson), kABPersonLastNameProperty));
@@ -96,15 +129,24 @@
                     lastName = [lastName stringByAppendingString:firstName];
                 }
             }
-            NSDictionary *dict = @{@"userName":lastName,@"phoneNum":str4};
-            [mutArr addObject:dict];
-           
+            if(str4.length > 0)
+            {
+                if(!lastName||lastName.length <= 0)
+                {
+                    NSDictionary *dict = @{@"userName":@"",@"phoneNum":str4};
+                    [mutArr addObject:dict];
+                }
+                else
+                {
+                    NSDictionary *dict = @{@"userName":lastName,@"phoneNum":str4};
+                    [mutArr addObject:dict];
+                }
+            }
+            
         }
     }
-    
     return mutArr;
-    }
-    
+
 }
 /*
  *写入文件
@@ -539,4 +581,26 @@
     }
     return str;
 }
++(CGFloat)getLabelHight:(UIFont *)fontSize
+{
+    NSString *str = @"我";
+    CGSize size = [str getStringSize:fontSize width:100];
+    return size.height;
+}
++(NSDictionary *)replaceNull:(NSDictionary *)dict
+{
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    NSString *jsonString = nil;
+    if(data)
+    {
+        jsonString = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
+        NSString *str1 = [jsonString stringByReplacingOccurrencesOfString:@": null" withString:@":\"\""];
+        NSData *data1 = [str1 dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *newDict = [NSJSONSerialization JSONObjectWithData:data1 options:NSJSONReadingMutableContainers error:nil];
+       // NSLog(@"^_^=%@",newDict);
+        return newDict;
+    }
+    return nil;
+}
+
 @end

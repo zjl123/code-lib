@@ -61,7 +61,7 @@
 "usableAsset" = "Balance:";
 "totalProfile" = "Total:";
 "lastProfile" = "Yesterday:";
-"currentV" = "Ver:2.1.3（Build2k161129）";
+"currentV" = "Ver:2.1.5（Build2k170106）";
 "rightN" = "Try now";
 "KYQ" = "Mining Circle";
 "cartLog" = "Available to view after login^_^";
@@ -71,7 +71,7 @@
 "longDrag" = "Long press, drag to reorder";
 "SMessage" = "Send Message";
 "send" = "Send";
-"aGesture" = "Change gesture code ";
+"aGesture" = "Cange gesture code ";
 "cGesture" = "Cancel gesture code";
 "sGesture" = "Set up gesture code";
 "createGes" = "Create gesture code";

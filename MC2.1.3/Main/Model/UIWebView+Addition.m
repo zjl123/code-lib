@@ -11,7 +11,8 @@
 @implementation UIWebView (Addition)
 -(NSString *)pageTitle
 {
-    return [self stringByEvaluatingJavaScriptFromString:@"document.title"];
+    return @"";
+    
 }
 -(NSString *)metaContent:(NSString *)key
 {

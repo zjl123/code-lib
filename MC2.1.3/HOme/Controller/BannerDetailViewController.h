@@ -12,4 +12,6 @@
 @property(nonatomic,retain)NSString *herfStr;
 @property(nonatomic,retain)NSString *testStr;
 @property(nonatomic,retain)NSString *searchStr;
+//推送到这个页面的时候隐藏searchView(jpush)
+@property(nonatomic,assign)BOOL pushHidden;
 @end

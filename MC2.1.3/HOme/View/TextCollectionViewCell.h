@@ -11,5 +11,4 @@
 @interface TextCollectionViewCell : UICollectionViewCell
 @property (weak, nonatomic) IBOutlet UILabel *title;
 @property (weak, nonatomic) IBOutlet UIView *greyPoint;
-
 @end

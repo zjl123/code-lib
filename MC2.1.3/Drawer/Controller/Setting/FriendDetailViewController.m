@@ -75,7 +75,7 @@
        str = ZGS(@"IMAddBlack");
         _tipLabel.hidden = YES;
     }
-    self.tbArr = @[@{@"title":str,@"ico":@""},@{@"title":ZGS(@"delete"),@"ico":@""}];
+    self.tbArr = @[@{@"title":str,@"ico":@"block"},@{@"title":ZGS(@"delete"),@"ico":@"delete_white"}];
     tbView.tbArr = _tbArr;
     [tbView reloadData];
 }

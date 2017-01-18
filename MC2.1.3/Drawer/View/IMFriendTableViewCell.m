@@ -18,6 +18,10 @@
     NSURL *url = [NSURL URLWithString:imgUrl];
     [self.headPortrait sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"contact"]];
     self.name.text = model.name;
+    if([model.phoneNum isKindOfClass:[NSNull class]])
+    {
+        NSLog(@"nulllll");
+    }
 }
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];

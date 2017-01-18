@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FriendVerifyViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface FriendVerifyViewController : BackButtonViewController
 @property (nonatomic,retain) NSString *name;
 @property (nonatomic,retain) NSString *userID;
 @end

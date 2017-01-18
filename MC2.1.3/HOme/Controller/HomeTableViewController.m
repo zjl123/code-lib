@@ -34,6 +34,7 @@
 #import "WebCollectionView.h"
 #import "WebCollectionViewCell.h"
 #import "IMRCChatViewController.h"
+#import "GoodsViewController.h"
 #define bannerHeight 128;
 #define tabHeight self.tabBarController.tabBar.frame.size.height;
 #define navHeight self.navigationController.navigationBar.frame.size.height;
@@ -61,8 +62,8 @@
     [super viewDidLoad];
     self.view.backgroundColor = RGB(244, 244, 244);
     self.automaticallyAdjustsScrollViewInsets=NO;
-   // NSString *path = NSHomeDirectory();
-   // NSLog(@"%@",path);
+    NSString *path = NSHomeDirectory();
+    NSLog(@"%@",path);
     [self location];
     isResponse = NO;
 #if KMIN
@@ -94,7 +95,6 @@
 #if KMIN
 -(void)scView
 {
-    NSLog(@"<<<>>>>dddddhhhhh");
     [SVGloble shareInstance].globleWidth = width1; //屏幕宽度
     [SVGloble shareInstance].globleHeight = height1-self.navigationController.navigationBar.frame.size.height-self.tabBarController.tabBar.frame.size.height-StatuesHeight-TABANOHEIGHT+12;
     //标题栏
@@ -133,7 +133,9 @@
             self.topView.IndexChangeBlock = ^(NSInteger index){
                 CGPoint offset = weakSelf.rootView.contentOffset;
                 offset.x = index * weakSelf.rootView.bounds.size.width;
+               // NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
                 [weakSelf.rootView setContentOffset:offset];
+              //  [weakSelf.rootView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
             };
 
             //默认选择第0个
@@ -416,7 +418,6 @@
             isResponse = YES;
             [self scView];
             [self refreshSearchData];
-           //  NSLog(@"rrrrr<<<<<>>>>>>webbb");
 #endif
             
         }

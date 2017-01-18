@@ -82,4 +82,9 @@
     [self sd_setImageWithURL:url forState:UIControlStateNormal];
     [self sd_setImageWithURL:url forState:UIControlStateSelected];
 }
+-(void)setImg:(NSString *)img
+{
+    [self setImage:[UIImage imageNamed:img] forState:UIControlStateNormal];
+    [self setImage:[UIImage imageNamed:img] forState:UIControlStateSelected];
+}
 @end

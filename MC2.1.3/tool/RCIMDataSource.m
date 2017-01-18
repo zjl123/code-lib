@@ -221,47 +221,11 @@
 }
 
 #pragma -mark 自定义方法（一下都是）
-#pragma -mark 获取群里所有成员信息
-//-(void)MygetAllMembersOfGroup:(NSString *)groupId
-//                      result:(void (^)(NSArray *userIdList))resultBlock
-//{
-//    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-//    NSDictionary *dict = [Tool readDictFromPath:@"time"];
-//    NSString *lastTime = dict[groupId];
-//    if(lastTime == nil)
-//    {
-//        lastTime = @"0";
-//    }
-//    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findGroupUsers&groupId=%@&lastAccessTime=%@",MAINURL,groupId,lastTime];
-//    [manager GET:getUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//       // NSLog(@"groupMember...%@",dict);
-//        NSArray *arr = dict[@"groupUserList"];
-//        if(arr.count > 0)
-//        {
-//            //存
-//            NSDictionary *dict = @{groupId:arr};
-//            NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(groupInfoThread:) object:dict];
-//            [thread start];
-//        }
-//        else
-//        {
-//            //取
-//            arr = [Tool readFileFromPath:groupId];
-//        }
-//        resultBlock(arr);
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        NSArray *arr = [Tool readFileFromPath:groupId];
-//        resultBlock(arr);
-//    }];
-//    
-//}
 #pragma -mark 获取通讯录
 -(void)getAddressBook:(void(^)(NSDictionary *addressDict))addressBlock
 {
     NSMutableDictionary *timeDict = [NSMutableDictionary dictionaryWithDictionary:[Tool readDictFromPath:@"time"]];
-    NSString *postTime = @"0";//timeDict[@"lastAccessTime"];
+    NSString *postTime = timeDict[@"lastAccessTime"];
     if(postTime == nil)
     {
         postTime = @"0";

@@ -30,6 +30,7 @@
 #import "MyNavViewController.h"
 #import "BgImgButton.h"
 #import "UINavigationItem+TbData.h"
+#import "NSString+Exten.h"
 #define GOLDNAVCOLOR(a) [UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:(a)]
 #define HEADHEIGHT 200
 @interface PersonCenterViewController () <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIAlertViewDelegate,LogDelegate,UIScrollViewDelegate,UIGestureRecognizerDelegate,UITableViewDataSource,UITableViewDelegate>
@@ -51,11 +52,86 @@
     int lll;
     UIView *bgView;
     BgImgButton *logoBtn;
-    UIView *unLogView;
+    UILabel *unLoglabel;
+    NSTimer *_timer;
+   // UITapGestureRecognizer *unLogViewTap;
 }
+//未登录时的遮罩层
+@property(nonatomic,retain)UIView *unLogView;
 @end
 
 @implementation PersonCenterViewController
+-(UIView *)unLogView
+{
+    if(!_unLogView)
+    {
+        _unLogView = [[UIView alloc]init];
+        _unLogView.backgroundColor = [UIColor clearColor];//[[UIColor redColor] colorWithAlphaComponent:0.3];
+        _unLogView.frame = CGRectMake(0, 160, width1, height1-TABANOHEIGHT-HEADHEIGHT);
+        [self.view insertSubview:_unLogView aboveSubview:collView];
+        //点击
+       UITapGestureRecognizer *unLogViewTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(unlogTap:)];
+        [_unLogView addGestureRecognizer:unLogViewTap];
+        //滑动
+        
+        UISwipeGestureRecognizer *swipDown = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(unLogSwipDown:)];
+        swipDown.direction = UISwipeGestureRecognizerDirectionDown;
+        [_unLogView addGestureRecognizer:swipDown];
+        
+        
+        UISwipeGestureRecognizer *swipUp = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(unLogSwipUp:)];
+        swipUp.direction = UISwipeGestureRecognizerDirectionUp;
+        [_unLogView addGestureRecognizer:swipUp];
+    }
+    return _unLogView;
+}
+-(void)unlogTap:(UITapGestureRecognizer *)gesture
+{
+    NSLog(@"未登录");
+    [self unLogTipView];
+}
+-(void)unLogSwipDown:(UISwipeGestureRecognizer *)gesture
+{
+    NSLog(@"下未登录");
+    [self unLogTipView];
+}
+-(void)unLogSwipUp:(UISwipeGestureRecognizer *)gesture
+{
+    NSLog(@"上未登录");
+    [self unLogTipView];
+}
+-(void)unLogTipView
+{
+    if(!unLoglabel)
+    {
+        CGSize size = [ZGS(@"unLog") getStringSize:[UIFont systemFontOfSize:12] width:width1];
+        CGFloat w = size.width+20;
+        CGFloat h = size.height+15;
+        CGFloat y = _unLogView.frame.size.height-50-h;
+        unLoglabel = [[UILabel alloc]initWithFrame:CGRectMake((width1-w)/2, y,w , h)];
+        unLoglabel.backgroundColor = RGB(96, 96, 96);
+        unLoglabel.textColor = [UIColor whiteColor];
+        unLoglabel.font = [UIFont systemFontOfSize:12];
+        unLoglabel.textAlignment = NSTextAlignmentCenter;
+        unLoglabel.text = ZGS(@"unLog");
+        unLoglabel.layer.cornerRadius = h/2;
+        unLoglabel.layer.masksToBounds = YES;
+        [_unLogView addSubview:unLoglabel];
+    }
+    unLoglabel.hidden = NO;
+    __weak typeof(self)vc = self;
+    
+    _timer =  [NSTimer scheduledTimerWithTimeInterval:0.5f target:vc selector:@selector(unLogHidden) userInfo:nil repeats:NO];
+}
+-(void)unLogHidden
+{
+    unLoglabel.hidden = YES;
+}
+-(void)dealloc
+{
+    [_timer invalidate];
+    _timer = nil;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -84,45 +160,55 @@
     [self setUpAdd];
     tbView = nil;
     self.isRefresh = NO;
-    NSUserDefaults *userdefault = [NSUserDefaults new];
-    NSInteger num = [userdefault integerForKey:@"login"];
-    lll = (int)num;
-    
-    if(num == 1)
-    {
-        _isLog = YES;
-        collView.scrollEnabled = YES;
-        
-    }
-    else
-    {
-        _isLog = NO;
-        [collView setContentOffset:CGPointMake(0, 0)];
-        collView.scrollEnabled = NO;
-    }
-    
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    CGFloat y = collView.contentOffset.y;
+    if(y == 0)
+    {
+        
+#if KMIN
+        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
+        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]];
+#elif KGOLD
+        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
+        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]];
+#endif
+        self.navigationController.navigationBar.alpha = 0;
+    }
+    else
+    {
+        self.navigationController.navigationBar.alpha = 0.9;
+        
+    }
+    self.navigationController.navigationBar.translucent = YES;
+#if KMIN
+    [self.navigationController.navigationBar setBarTintColor:BLUECOLOR];
+#elif KGOLD
+#endif
+
     addBtn.hidden = NO;
     logoBtn.hidden = NO;
-    NSInteger num = [DEFAULT integerForKey:@"login"];
-    if(lll != num)
-    {
-        lll = (int)num;
+    NSUserDefaults *userdefault = [NSUserDefaults new];
+    NSInteger num = [userdefault integerForKey:@"login"];
+   // if(lll != num)
+   // {
+      //  lll = (int)num;
         if(num == 1)
         {
             _isLog = YES;
+            self.unLogView.hidden = YES;
             collView.scrollEnabled = YES;
         }
         else
         {
             _isLog = NO;
+            self.unLogView.hidden = NO;
             [collView setContentOffset:CGPointMake(0, 0)];
             collView.scrollEnabled = NO;
         }
-    }
+ //   }
     
 //每次都要走的
     if(collView.numberOfSections > 0)
@@ -139,29 +225,7 @@
     }
     
     a = 0;
-//nav的设置
-    CGFloat y = collView.contentOffset.y;
-    if(y == 0)
-    {
-#if KMIN
-        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
-        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]];
-#elif KGOLD
-        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
-        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]];
-#endif
-        self.navigationController.navigationBar.alpha = 0;
-    }
-    else
-    {
-        self.navigationController.navigationBar.alpha = 0.9;
 
-    }
-    self.navigationController.navigationBar.translucent = YES;
-#if KMIN
-    [self.navigationController.navigationBar setBarTintColor:BLUECOLOR];
-#elif KGOLD
-#endif
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -240,11 +304,11 @@
    // [collView registerClass:[SecendCollectionViewCell class] forCellWithReuseIdentifier:@"csecend"];
     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"ewq"];
     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"qwe"];
+     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"kkk"];
+    //[collView setPrefetchingEnabled:NO];
     UINib *nib = [UINib nibWithNibName:@"HeaderCollectionReusableView" bundle:nil];
     [collView registerNib:nib forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"header"];
     redDict = [userDefault objectForKey:@"hotmenu"];
-    
-    collView.pinchGestureRecognizer.delegate = self;
 }
 -(void)loginClick:(UIButton *)btn
 {
@@ -328,7 +392,12 @@
     {
         NSDictionary *dict = sectionArr[section];
         NSArray *arr = dict[@"item"];
-        return arr.count;
+        NSInteger num = arr.count;
+        if(num%2 != 0)
+        {
+            num+=1;
+        }
+        return num;
     }
 }
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -355,23 +424,36 @@
     {
         NSDictionary *dict = sectionArr[indexPath.section];
         NSArray *arr = dict[@"item"];
-        NSDictionary *infoDict = arr[indexPath.row];
-        NSString *bgColor = infoDict[@"label3"];
-        if(bgColor.length > 0)
+        if(indexPath.row < arr.count)
         {
-            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ewq" forIndexPath:indexPath];
-            
-            cell.dict = infoDict;
-            cell.redDict = redDict;
-             return cell;
+            NSDictionary *infoDict = arr[indexPath.row];
+            NSString *bgColor = infoDict[@"label3"];
+            if(bgColor.length > 0)
+            {
+                FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ewq" forIndexPath:indexPath];
+                
+                cell.dict = infoDict;
+                cell.redDict = redDict;
+                 return cell;
+            }
+            else
+            {
+                FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"qwe" forIndexPath:indexPath];
+                cell.dict =  infoDict;
+                cell.redDict = redDict;
+                return cell;
+                
+            }
         }
         else
         {
-            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"qwe" forIndexPath:indexPath];
-            cell.dict =  infoDict;
-            cell.redDict = redDict;
+            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"kkk" forIndexPath:indexPath];
+            cell.titleName.text = @"";
+            cell.subTitle.text = @"";
+            cell.icon = nil;
+            cell.redPoint.hidden = YES;
             return cell;
-            
+
         }
     
     }
@@ -383,7 +465,7 @@
 {
     if(indexPath.section == 0)
     {
-        return CGSizeMake(width1, 200);
+        return CGSizeMake(width1, HEADHEIGHT);
     }
     else
     {
@@ -432,27 +514,30 @@
     }
     else
     {
-        NSDictionary *dict = sectionArr[indexPath.section];
-        NSArray *arr = dict[@"item"];
-        NSDictionary *detailDict = arr[indexPath.row];
-        NSString *strUrl = detailDict[@"act"];
-        if(strUrl.length > 0)
-        {
-            if([strUrl rangeOfString:@"#invit"].location != NSNotFound)
+            NSDictionary *dict = sectionArr[indexPath.section];
+            NSArray *arr = dict[@"item"];
+            if(indexPath.row < arr.count)
             {
-                NSArray *arr = [Tool getShareParams:strUrl];
-                [self share:arr];
-            }
-            else if ([strUrl rangeOfString:@"#callapp"].location != NSNotFound)
+            NSDictionary *detailDict = arr[indexPath.row];
+            NSString *strUrl = detailDict[@"act"];
+            if(strUrl.length > 0)
             {
-                NSArray *arr =  [Tool getShareParams:strUrl];
-                [self callApp:arr];
-            }
+                if([strUrl rangeOfString:@"#invit"].location != NSNotFound)
+                {
+                    NSArray *arr = [Tool getShareParams:strUrl];
+                    [self share:arr];
+                }
+                else if ([strUrl rangeOfString:@"#callapp"].location != NSNotFound)
+                {
+                    NSArray *arr =  [Tool getShareParams:strUrl];
+                    [self callApp:arr];
+                }
 
-            else
-            {
-                //NSString *str = [NSString stringWithFormat:@"%@&uap=ios",strUrl];
-                [self jumpDetail:strUrl];
+                else
+                {
+                    //NSString *str = [NSString stringWithFormat:@"%@&uap=ios",strUrl];
+                    [self jumpDetail:strUrl];
+                }
             }
         }
     }
@@ -691,11 +776,10 @@
     [tbView.layer addAnimation:animation forKey:@"animation"];
     tbView.hidden = YES;
 }
-
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    NSLog(@"%@",[touch.view.superview class]);
-    NSLog(@"%@",[gestureRecognizer.view class]);
+   // NSLog(@"%@",[touch.view.superview class]);
+   // NSLog(@"%@",[gestureRecognizer.view class]);
     //截获手势（解决手势冲突问题）
     if([touch.view.superview isKindOfClass:[UITableViewCell class]])
     {

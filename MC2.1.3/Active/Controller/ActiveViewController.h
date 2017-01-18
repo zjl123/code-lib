@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 #import <RongIMKit/RongIMKit.h>
+
 @interface ActiveViewController : BaseViewController
 //-(void)response:(NSNotification *)n;
 //@property(nonatomic,retain)NSString *strUrl;

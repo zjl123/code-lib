@@ -23,6 +23,10 @@
 -(void)jumpWebView:(NSString *)webHref;
 -(void)gotoLogin;
 -(void)getValue;
+/*
+ *搜索栏隐藏
+ */
+-(void)searchHidden;
 /**
  建立searchbar
  */

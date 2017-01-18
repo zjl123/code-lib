@@ -16,6 +16,7 @@
 @interface IMRCChatViewController ()<RCMessageCellDelegate>
 {
     NSArray *groupMemberArr;
+    UIButton *backBtn;
 }
 @end
 
@@ -24,6 +25,24 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+   // self.navigationController.navigationBar.backItem.title = @"222";
+    self.navigationController.navigationBar.topItem.title = @"";
+    
+    [self.navigationItem setHidesBackButton:YES];
+    
+    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+
+    // backBtn.backgroundColor = [UIColor greenColor];
+    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:backBtn];
+
+    
+    SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
+    searchView.hidden = YES;
     //群
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = CGRectMake(0, 0, 30, 30);
@@ -45,11 +64,21 @@
     //删除聊天记录
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ClearHistoryMsg:) name:@"ClearHistoryMsg" object:nil];
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    backBtn.hidden = NO;
+}
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    backBtn.hidden = YES;
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"renameGroupName" object:nil];
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"ClearHistoryMsg" object:nil];
+}
+-(void)leftBtnclick:(UIBarButtonItem *)item
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 -(void)renameGroupName:(NSNotification *)notify
 {
@@ -85,7 +114,7 @@
     if (self.conversationType == ConversationType_GROUP ||
         self.conversationType == ConversationType_DISCUSSION||self.conversationType == ConversationType_PRIVATE) {
         if (![userId isEqualToString:[RCIM sharedRCIM].currentUserInfo.userId]) {
-            NSLog(@"ccccc");
+            //NSLog(@"ccccc");
             
             //跳转到详情（是好友跳转到好友详情，不是好友跳转到添加好友）
             

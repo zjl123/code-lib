@@ -12,7 +12,7 @@
 #import "ShareView.h"
 #import "ImgButton.h"
 #import "NSString+Exten.h"
-@interface WebViewController () <UIWebViewDelegate>
+@interface WebViewController () 
 {
     
    // GreyView *view;
@@ -38,11 +38,11 @@
     web.delegate = self;
     backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
-    backBtn.frame = CGRectMake(7, 4, 30, 36);
-    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
    // backBtn.imageView.backgroundColor = [UIColor yellowColor];
     backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
- //   backBtn.backgroundColor = [UIColor greenColor];
+    //backBtn.backgroundColor = [UIColor greenColor];
     [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [web.scrollView setShowsVerticalScrollIndicator:NO];
     [self.view addSubview:web];
@@ -134,24 +134,23 @@
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
-
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
     [self activituStartShow];
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-  //  if(view !=nil)
-  ///  {
-        [_activity removeFromSuperview];
-        [_greyView removeFromSuperview];
-        _greyView = nil;
- //   }
+    //  if(view !=nil)
+    ///  {
+    [_activity removeFromSuperview];
+    [_greyView removeFromSuperview];
+    _greyView = nil;
+    //   }
     _label.text = [web pageTitle];
     
     _label.lineBreakMode = NSLineBreakByTruncatingTail;
     _label.textAlignment = NSTextAlignmentCenter;
-
+    
     
 }
 -(void)activityStopShow

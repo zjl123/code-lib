@@ -22,8 +22,14 @@
     return self;
     
 }
--(void)layoutSubviews
+//-(void)layoutSubviews
+//{
+//    
+//
+//}
+-(void)setDict:(NSDictionary *)dict
 {
+    _dict = dict;
     _titleName.text = _dict[@"title"];
     _subTitle.text = _dict[@"sub_title"];
     NSString *str = _dict[@"ico"];
@@ -47,7 +53,6 @@
     {
         _redPoint.hidden = YES;
     }
-    
 
 }
 -(void)drawRect:(CGRect)rect

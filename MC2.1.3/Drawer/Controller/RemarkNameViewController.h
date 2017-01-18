@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "BackButtonViewController.h"
 @protocol TransformValueDelegate <NSObject>
 
 -(void)transformValues:(NSString *)value;
 
 @end
-@interface RemarkNameViewController : UIViewController
+@interface RemarkNameViewController : BackButtonViewController
 @property (nonatomic, retain) NSString *userid;
 @property (nonatomic, weak) id <TransformValueDelegate>transDelegate;
 @property (retain, nonatomic) NSString *remarkTip;

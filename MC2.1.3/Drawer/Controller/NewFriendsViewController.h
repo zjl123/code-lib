@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "IMUserModel.h"
-@interface NewFriendsViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface NewFriendsViewController : BackButtonViewController
 //@property (nonatomic, strong) IMUserModel *model;
 @property (nonatomic, strong) NSArray *dataArr;
 @property (nonatomic, retain) NSString *statues;

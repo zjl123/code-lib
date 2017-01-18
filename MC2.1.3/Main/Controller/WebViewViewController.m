@@ -45,7 +45,7 @@
     NSURL *url = [NSURL URLWithString:self.herfStr];
     NSURLRequest *reqest = [NSURLRequest requestWithURL:url];
     [web loadRequest:reqest];
-    titleView.text = [web pageTitle];
+  //  titleView.text = [web pageTitle];
 }
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -58,10 +58,11 @@
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+
     [self.activity removeFromSuperview];
     [self.greyView removeFromSuperview];
     self.greyView = nil;
-    titleView.text = [web pageTitle];
+  //  titleView.text = [web pageTitle];
 }
 
 -(BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType

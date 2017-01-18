@@ -15,9 +15,7 @@
 @end
 
 @implementation BackButtonViewController
-{
-    UIButton *backBtn;
-}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -26,9 +24,13 @@
     [self.navigationItem setHidesBackButton:YES];
     backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
-    backBtn.contentMode = UIViewContentModeScaleAspectFit;
-    backBtn.frame = CGRectMake(7, 4, 30, 36);
-    // backBtn.backgroundColor = [UIColor greenColor];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    //backBtn.frame = CGRectMake(7, 4, 30, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+ //   backBtn.imageView.backgroundColor = [UIColor redColor];
+  //   backBtn.backgroundColor = [UIColor greenColor];
     [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:backBtn];
     

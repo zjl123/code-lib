@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "IMUserModel.h"
-@interface IMAddFirendViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface IMAddFirendViewController : BackButtonViewController
 //@property (retain ,nonatomic) NSString *nameText;
 //@property (retain ,nonatomic) NSString *imgUrl;
 @property (retain ,nonatomic) NSString *userID;

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface GroupListViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface GroupListViewController : BackButtonViewController
 @property(nonatomic,retain)NSArray *groupArr;
 @end

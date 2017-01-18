@@ -99,7 +99,7 @@
 -(void)tabbar:(MyTabBar *)tabBar didSelectedButtonfrom:(int)from to:(int)to
 {
     self.selectedIndex=to;
-    
+    _currentController = controllerArr[to];
 }
 
 -(void)jumpDetail:(NSString *)str
@@ -249,7 +249,7 @@
     
     NSDictionary *dict1 = @{@"login":@"web"};
     [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:dict1];
-    NSLog(@"<<<<<>>>>>>webbb");
+    
 }
 //-(void)response3:(NSNotification *)n
 //{

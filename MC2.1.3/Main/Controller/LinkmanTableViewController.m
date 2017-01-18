@@ -29,16 +29,8 @@
     ActivityView *actView;
     dispatch_queue_t _queue;
     dispatch_queue_t _main;
+    UIButton *backBtn;
 }
-//-(NSArray *)firstArr
-//{
-//    if(!_firstArr)
-//    {
-//        _firstArr = [NSArray array];
-//        //self.firstArr = _firstArr;
-//    }
-//    return _firstArr;
-//}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -46,8 +38,18 @@
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(leftBtnclick:)];
-    self.navigationItem.leftBarButtonItem = leftBtn;
+    [self.navigationItem setHidesBackButton:YES];
+    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    //backBtn.frame = CGRectMake(7, 4, 30, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+    //   backBtn.imageView.backgroundColor = [UIColor redColor];
+    //   backBtn.backgroundColor = [UIColor greenColor];
+    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:backBtn];
     ImgButton *rightBtn = [ImgButton buttonWithType:UIButtonTypeCustom];
     rightBtn.frame = CGRectMake(0, 0, 40, 30);
     [rightBtn setTitle:ZGS(@"edit") forState:UIControlStateNormal];
@@ -68,6 +70,11 @@
     [self getPhoneBooks];
 
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    backBtn.hidden = YES;
+}
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -83,22 +90,32 @@
     _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _main = dispatch_get_main_queue();
     dispatch_async(_queue, ^{
-        self.firstArr = [Tool getAddressBook];
-        NSDictionary *resultDict = [Tool sort:self.firstArr sortKey:@"userName"];
-        [self activityStopShow];
-        _linkArr = resultDict[@"sec"];
-        _tagArr = resultDict[@"tag"];
-        dispatch_async(_main, ^{
-            if(self.firstArr.count > 0)
+        
+      //  self.firstArr = [Tool getAddressBook];
+        
+        [[Tool shareInstance]getAddressBook:^(NSArray *addressArray) {
+            if(addressArray&&addressArray.count > 0)
             {
-                [self.tableView reloadData];
+                self.firstArr = addressArray;
+                NSDictionary *resultDict = [Tool sort:self.firstArr sortKey:@"userName"];
+                [self activityStopShow];
+                _linkArr = resultDict[@"sec"];
+                _tagArr = resultDict[@"tag"];
+                dispatch_async(_main, ^{
+                    if(self.firstArr.count > 0)
+                    {
+                        [self.tableView reloadData];
+                    }
+                });
             }
             else
             {
                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"getFailed") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
                 [alertView show];
+                
             }
-        });
+        }];
+        
          });
 }
 -(void)activity
@@ -129,7 +146,7 @@
 
 
 
--(void)leftBtnclick:(UIBarButtonItem *)item
+-(void)leftBtnclick:(UIButton *)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }

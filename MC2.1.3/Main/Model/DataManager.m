@@ -10,6 +10,7 @@
 //#include "Encrypt.h"
 //#include "base64.h"
 #import "PwdEdite.h"
+#import "Tool.h"
 @interface DataManager ()
 
 //@property(nonatomic,strong)NSDictionary *dic;
@@ -59,7 +60,13 @@
     if(!_manager)
     {
         _manager = [AFHTTPSessionManager manager];
+        //禁止自动解析
         _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+     //   AFJSONResponseSerializer *response = [AFJSONResponseSerializer serializer];
+    //    response.removesKeysWithNullValues = YES;
+    //    response.readingOptions = NSJSONReadingMutableContainers;
+    //    response.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/json", nil];
+    //    _manager.responseSerializer = response;
         _manager.requestSerializer = [AFJSONRequestSerializer serializer];
     }
     return _manager;
@@ -73,9 +80,15 @@
             paratemers = [PwdEdite ecoding:paratemers];
         }
         [self.manager POST:strUrl parameters:paratemers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+           NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
             dict = [PwdEdite decoding:dict];
-            completion(dict);
+            //NSDictionary *dict = [PwdEdite decoding:responseObject];
+            NSDictionary *newDict = [Tool replaceNull:dict];
+            if(newDict.count <= 0)
+            {
+                completion(newDict);
+            }
+            completion(newDict);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             completion(nil);
         }];
@@ -89,7 +102,13 @@
         [self.manager GET:strUrl parameters:paratemers progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
             NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
             dict = [PwdEdite decoding:dict];
-            completion(dict);
+           // NSDictionary *dict = [PwdEdite decoding:responseObject];
+            NSDictionary *newDict = [Tool replaceNull:dict];
+            if(newDict.count <= 0)
+            {
+                completion(newDict);
+            }
+            completion(newDict);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
             completion(nil);
 

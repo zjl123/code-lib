@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface IMSearchFriendViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface IMSearchFriendViewController : BackButtonViewController
 
 @end
