@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11760" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11755"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="NewFriendTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="60"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="59"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ilg-HK-1Jf">
+                        <rect key="frame" x="15" y="7.5" width="45" height="45"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="45" id="6k3-Sg-pLs"/>
+                            <constraint firstAttribute="height" constant="45" id="gPM-eg-eUw"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R4Z-am-CvG">
+                        <rect key="frame" x="70" y="7.5" width="38" height="18"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ufx-kJ-39o">
+                        <rect key="frame" x="70" y="35.5" width="36" height="17"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.5170014500617981" green="0.51698595285415649" blue="0.51699477434158325" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aov-8W-VxJ">
+                        <rect key="frame" x="264" y="15" width="46" height="30"/>
+                        <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="46" id="T4Z-EE-rde"/>
+                        </constraints>
+                        <state key="normal" title="接受">
+                            <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        </state>
+                        <connections>
+                            <action selector="btnClick:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="x4w-Uo-RO3"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ilg-HK-1Jf" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="01j-W9-W4k"/>
+                    <constraint firstItem="R4Z-am-CvG" firstAttribute="top" secondItem="ilg-HK-1Jf" secondAttribute="top" id="Gxm-IS-ppE"/>
+                    <constraint firstAttribute="trailing" secondItem="Aov-8W-VxJ" secondAttribute="trailing" constant="10" id="LJ1-Gv-C5k"/>
+                    <constraint firstItem="Ufx-kJ-39o" firstAttribute="bottom" secondItem="ilg-HK-1Jf" secondAttribute="bottom" id="UTl-hl-pnO"/>
+                    <constraint firstItem="Aov-8W-VxJ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="b4B-pm-caS"/>
+                    <constraint firstItem="R4Z-am-CvG" firstAttribute="leading" secondItem="ilg-HK-1Jf" secondAttribute="trailing" constant="10" id="bfd-mB-l5d"/>
+                    <constraint firstItem="Ufx-kJ-39o" firstAttribute="leading" secondItem="R4Z-am-CvG" secondAttribute="leading" id="dYX-T7-au5"/>
+                    <constraint firstItem="ilg-HK-1Jf" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="v7G-3i-sGO"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="btn" destination="Aov-8W-VxJ" id="30f-0b-gek"/>
+                <outlet property="detail" destination="Ufx-kJ-39o" id="1or-b3-Tko"/>
+                <outlet property="headPoritial" destination="ilg-HK-1Jf" id="uXb-TJ-dcE"/>
+                <outlet property="name" destination="R4Z-am-CvG" id="1uM-9T-gtL"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

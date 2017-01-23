@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NickNameViewController">
+            <connections>
+                <outlet property="nickName" destination="wBt-wu-iID" id="HU7-up-rix"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="Scarlett" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="wBt-wu-iID">
+                    <rect key="frame" x="32" y="45" width="256" height="24"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="T3O-zm-7uF"/>
+                    </connections>
+                </textField>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Yb-WF-mL7">
+                    <rect key="frame" x="20" y="69" width="335" height="1"/>
+                    <color key="backgroundColor" red="0.14117647059999999" green="0.61568627450000002" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="1" id="ccR-wf-qhh"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="好名字相当于一张好的名片。" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LtE-tG-Hgd">
+                    <rect key="frame" x="32" y="85" width="182" height="17"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <color key="textColor" red="0.56862745100000001" green="0.56862745100000001" blue="0.56862745100000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="5Yb-WF-mL7" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="9Ha-A6-k74"/>
+                <constraint firstAttribute="trailing" secondItem="wBt-wu-iID" secondAttribute="trailing" constant="87" id="Ahy-jp-Ff8"/>
+                <constraint firstItem="LtE-tG-Hgd" firstAttribute="leading" secondItem="wBt-wu-iID" secondAttribute="leading" id="Ew1-up-6Y4"/>
+                <constraint firstItem="wBt-wu-iID" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="45" id="GSn-pY-wmm"/>
+                <constraint firstItem="wBt-wu-iID" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="32" id="bo7-G5-rKP"/>
+                <constraint firstItem="LtE-tG-Hgd" firstAttribute="top" secondItem="5Yb-WF-mL7" secondAttribute="bottom" constant="15" id="by3-DP-PcO"/>
+                <constraint firstItem="5Yb-WF-mL7" firstAttribute="top" secondItem="wBt-wu-iID" secondAttribute="bottom" id="jdj-lx-MNH"/>
+                <constraint firstAttribute="trailing" secondItem="5Yb-WF-mL7" secondAttribute="trailing" constant="20" id="zLc-Yu-IM6"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="119.5" y="247.5"/>
+        </view>
+    </objects>
+</document>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="ImageTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="88"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="87"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Usl-m5-0nF">
+                        <rect key="frame" x="245" y="15" width="67" height="57"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="67" id="084-rg-SGq"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="头像" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GhQ-NY-RPM">
+                        <rect key="frame" x="12" y="34" width="32" height="20"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Usl-m5-0nF" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="4Gb-WT-kaV"/>
+                    <constraint firstItem="Usl-m5-0nF" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="GXy-sj-R4O"/>
+                    <constraint firstItem="Usl-m5-0nF" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="Gh3-2c-ZiZ"/>
+                    <constraint firstItem="GhQ-NY-RPM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="KuI-qQ-b8B"/>
+                    <constraint firstAttribute="trailing" secondItem="Usl-m5-0nF" secondAttribute="trailing" constant="8" id="NAQ-Cy-SAQ"/>
+                    <constraint firstItem="GhQ-NY-RPM" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="S2V-Yh-a9Y"/>
+                    <constraint firstAttribute="trailing" secondItem="Usl-m5-0nF" secondAttribute="trailing" constant="8" id="blB-6G-op9"/>
+                    <constraint firstAttribute="bottom" secondItem="Usl-m5-0nF" secondAttribute="bottom" constant="15" id="nAK-2M-1nV"/>
+                </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="GXy-sj-R4O"/>
+                        <exclude reference="NAQ-Cy-SAQ"/>
+                        <exclude reference="nAK-2M-1nV"/>
+                    </mask>
+                </variation>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="headImage" destination="Usl-m5-0nF" id="Oi3-On-e3u"/>
+                <outlet property="title" destination="GhQ-NY-RPM" id="DDn-dr-hMg"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+</document>

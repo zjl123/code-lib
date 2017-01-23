@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="gTV-IL-0wX" customClass="ScrollerCollectionViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="301" height="381"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="301" height="381"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qfi-6m-N1Q">
+                        <rect key="frame" x="0.0" y="0.0" width="301" height="300"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="300" id="HuN-1q-Oea"/>
+                        </constraints>
+                    </scrollView>
+                    <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="AZc-qe-0il">
+                        <rect key="frame" x="131" y="258" width="39" height="37"/>
+                    </pageControl>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dEU-xE-9Hg">
+                        <rect key="frame" x="8" y="308" width="285" height="17"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rca-jA-yeu">
+                        <rect key="frame" x="8" y="330" width="285" height="16"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" red="0.94901960780000005" green="0.16078431369999999" blue="0.16078431369999999" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99.00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RIV-cC-CqO">
+                        <rect key="frame" x="8" y="352" width="52" height="21"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                        <color key="textColor" red="0.94901960784313721" green="0.16078431372549018" blue="0.16078431372549018" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+            </view>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="AZc-qe-0il" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="2pd-qU-3Hh"/>
+                <constraint firstItem="rca-jA-yeu" firstAttribute="trailing" secondItem="dEU-xE-9Hg" secondAttribute="trailing" id="Dsq-7N-jww"/>
+                <constraint firstAttribute="trailing" secondItem="dEU-xE-9Hg" secondAttribute="trailing" constant="8" id="KQb-el-Rwr"/>
+                <constraint firstItem="dEU-xE-9Hg" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="8" id="LBC-GV-Fdv"/>
+                <constraint firstItem="AZc-qe-0il" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="258" id="Lxs-Sf-gtI"/>
+                <constraint firstItem="rca-jA-yeu" firstAttribute="top" secondItem="dEU-xE-9Hg" secondAttribute="bottom" constant="5" id="LyX-oa-hFO"/>
+                <constraint firstItem="rca-jA-yeu" firstAttribute="leading" secondItem="dEU-xE-9Hg" secondAttribute="leading" id="PBD-Ed-y1m"/>
+                <constraint firstItem="dEU-xE-9Hg" firstAttribute="top" secondItem="qfi-6m-N1Q" secondAttribute="bottom" constant="8" id="RQY-L4-QcT"/>
+                <constraint firstItem="qfi-6m-N1Q" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="VpV-Hf-JOo"/>
+                <constraint firstItem="qfi-6m-N1Q" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="Yoe-xl-P6m"/>
+                <constraint firstAttribute="trailing" secondItem="qfi-6m-N1Q" secondAttribute="trailing" id="trt-G4-iFF"/>
+                <constraint firstItem="RIV-cC-CqO" firstAttribute="top" secondItem="rca-jA-yeu" secondAttribute="bottom" constant="6" id="wCN-9w-YPV"/>
+                <constraint firstItem="RIV-cC-CqO" firstAttribute="leading" secondItem="dEU-xE-9Hg" secondAttribute="leading" id="zTd-3n-N8r"/>
+            </constraints>
+            <size key="customSize" width="301" height="385"/>
+            <connections>
+                <outlet property="bannerView" destination="qfi-6m-N1Q" id="Hau-yT-asx"/>
+                <outlet property="pageView" destination="AZc-qe-0il" id="og2-Lw-ytG"/>
+                <outlet property="price" destination="RIV-cC-CqO" id="aFK-Ia-LsJ"/>
+                <outlet property="subTitle" destination="rca-jA-yeu" id="c6f-qa-VKg"/>
+                <outlet property="title" destination="dEU-xE-9Hg" id="WB2-E8-Aij"/>
+            </connections>
+            <point key="canvasLocation" x="134.5" y="3.5"/>
+        </collectionViewCell>
+    </objects>
+</document>

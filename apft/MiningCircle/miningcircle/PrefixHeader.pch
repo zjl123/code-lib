@@ -1,0 +1,56 @@
+//
+//  PrefixHeader.pch
+//  MiningCircle
+//
+//  Created by zhanglily on 15/7/16.
+//  Copyright (c) 2015年 zjl. All rights reserved.
+//
+
+#ifndef MiningCircle_PrefixHeader_pch
+#define MiningCircle_PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#endif
+//pch文件的写法
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "UIBarButtonItem+Badge.h"
+#define KGOLD 1
+#if KMIN
+//#define STRURL @"http://www.miningcircle.com/appproxy.do?v3"
+//#define MAINURL @"http://www.miningcircle.com/"
+#define STRURL @"http://192.168.1.145:8087/appproxy.do?v3"
+#define MAINURL @"http://192.168.1.145:8087/"
+#elif KGOLD
+#define STRURL @"http://apftown.com/appproxy.do?v3"
+#define MAINURL @"http://apftown.com/"
+//#define STRURL @"http://192.168.1.220/appproxy.do?v3"
+//#define MAINURL @"http://192.168.1.220/"
+//#define STRURL @"http://192.168.1.109/gl/m3/appproxy.do?v3"
+//#define MAINURL @"http://192.168.1.109/gl/"
+//#define STRURL @"http://192.168.1.249/m3/appproxy.do?v3"
+//#define MAINURL @"http://192.168.1.249/m3/"
+//#define STRURL @"http://test.kuangyequan.com/Finance/m3/appproxy.do?v3"
+//#define MAINURL @"http://test.kuangyequan.com/Finance/"
+#endif
+#define width1 [UIScreen mainScreen].bounds.size.width
+#define height1 [UIScreen mainScreen].bounds.size.height
+#define TABBARHEIGHT self.tabBarController.tabBar.frame.size.height
+#define TABANOHEIGHT 5.0f
+
+#define NAVHEIGHT self.navigationController.navigationBar.frame.size.height
+#define StatuesHeight [[UIApplication sharedApplication] statusBarFrame].size.height
+#define RGB(r,g,b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.9 blue:(b)/255.0 alpha:1.0]
+#if KMIN
+#define MAINCOLOR [UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:1.0]
+#define BLUECOLOR [UIColor colorWithRed:0/255.0 green:165/255.0 blue:247/255.0 alpha:1.0]
+#elif KGOLD
+#define MAINCOLOR [UIColor colorWithRed:243/255.0 green:184/255.0 blue:2/255.0 alpha:1.0]
+#define BLUECOLOR [UIColor colorWithRed:0/255.0 green:0/255.0 blue:0/255.0 alpha:1.0]
+#endif
+#define CC(l)  NSLocalizedString(l, nil)
+#define DEFAULT [NSUserDefaults standardUserDefaults]
+#import "FGLanguageTool.h"
+#endif
