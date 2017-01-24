@@ -42,7 +42,7 @@
     //获取好友数据
     
     [self getAllFriendsInfoFromServer];
-    section1= @[@{@"img":@"newfriend",@"title":ZGS(@"IMNewFriend")},@{@"img":@"groups",@"title":ZGS(@"IMGroup")},@{@"img":@"groups",@"title":ZGS(@"IMMobile")}];
+    section1= @[@{@"img":@"newfriend",@"title":ZGS(@"IMNewFriend")},@{@"img":@"groups",@"title":ZGS(@"IMGroup")}];
     refresh = NO;
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -144,13 +144,6 @@
             GroupListViewController *groupList = [[GroupListViewController alloc]initWithNibName:@"GroupListViewController" bundle:nil];
             [self.navigationController pushViewController:groupList animated:YES];
         }
-        else if(indexPath.row == 2)
-        {
-            //手机联系人
-            MobileContactViewController *mobileContact = [[MobileContactViewController alloc]init];
-            [self.navigationController pushViewController:mobileContact animated:YES];
-            
-        }
     }
     else
     {
@@ -159,6 +152,7 @@
         friendDetail.freshDelegate = self;
         NSDictionary *dict = sortedArr[indexPath.section-1][indexPath.row];
         friendDetail.model = [[IMUserModel alloc]initWithDictionary:dict];
+       // refresh = YES;
         [self.navigationController pushViewController:friendDetail animated:YES];
     }
 }

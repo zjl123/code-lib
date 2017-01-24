@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface PrivateInfoSettingViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface PrivateInfoSettingViewController : BackButtonViewController
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (retain, nonatomic) NSString *userId;

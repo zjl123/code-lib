@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "IMGroupModel.h"
-@interface GroupInfoSettingViewController : UIViewController
+#import "BackButtonViewController.h"
+@interface GroupInfoSettingViewController : BackButtonViewController
 @property (retain, nonatomic) NSString *groupId;
 //根据groupId获取groupModel
 @property (strong, nonatomic) IMGroupModel *groupModel;

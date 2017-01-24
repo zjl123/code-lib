@@ -13,4 +13,5 @@
 +(DataManager *)shareInstance;
 +(AFHTTPSessionManager *)shareHTTPRequestOperationManager;
 -(void)ConnectServer:(NSString *)strUrl parameters:(id)paratemers isPost:(BOOL)isPost result:(void(^)(NSDictionary * resultBlock))completion;
+-(void)chectNetWork:(UIView *)showView;
 @end

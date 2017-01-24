@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "Tool.h"
 @interface LinkmanTableViewController : UITableViewController
+{
+    BOOL isEditing;
+   
+}
 @property(nonatomic,retain)NSArray *paramsArr;
 @property(nonatomic,retain)NSArray *linkArr;
 @property(nonatomic,retain)NSArray *tagArr;

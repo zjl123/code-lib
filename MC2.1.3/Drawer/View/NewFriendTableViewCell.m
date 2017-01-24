@@ -25,6 +25,8 @@
 
     // Configure the view for the selected state
 }
+-(void)setHighlighted:(BOOL)highlighted
+{}
 -(void)setStatues:(NSString *)statues
 {
     _statues = statues;
@@ -34,7 +36,7 @@
     }
     else if ([statues isEqualToString:@"2"])
     {
-        [self acceptStatus:@"接受" tintColor:[UIColor whiteColor] andColor:RGB(0, 122, 255)];
+        [self acceptStatus:@"邀请" tintColor:[UIColor whiteColor] andColor:RGB(0, 122, 255)];
         _btn.userInteractionEnabled = YES;
     }
     else if ([statues isEqualToString:@"0"])

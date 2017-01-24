@@ -11,11 +11,12 @@
 #import "UIImageView+WebCache.h"
 #import "NSString+Exten.h"
 #import "NSString+Exten.h"
+#import "BannerDetailViewController.h"
 #define originalHeight 75.0f
 //#define newHeight 100.0f
 //#define isOpen @"85.0f"
 #import "ImgButton.h"
-@interface MsgListViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface MsgListViewController ()<UITableViewDelegate,UITableViewDataSource,UIGestureRecognizerDelegate>
 {
     NSMutableArray *cellArr;
     CGFloat cellHeight;
@@ -42,6 +43,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
     //编辑按钮
     ImgButton *btn = [ImgButton buttonWithType:UIButtonTypeCustom];
     //btn.titleLabel.font = [UIFont systemFontOfSize:17];
@@ -203,6 +205,8 @@
     cell.title.text = dict[@"title"];
     NSString *content = dict[@"content"];
     cell.detail.text = content;
+    cell.type = dict[@"type"];
+    cell.herfUrl = dict[@"url"];
     cell.detail.opaque = NO; // 选中Opaque表示视图后面的任何内容都不应该绘制
     cell.selectionStyle=UITableViewCellSelectionStyleDefault;
     if([showArr[indexPath.row] isEqualToString:@"Yes"])
@@ -326,28 +330,52 @@
     {
         TableViewCell *targetCell = [tableView cellForRowAtIndexPath:indexPath];
         // NSLog(@"vvvvv%f",targetCell.detail.frame.size.width);
-        targetCell.selected = YES;
-        if (targetCell.frame.size.height == originalHeight){
-            CGSize size = [targetCell.detail.text getStringSize:[UIFont systemFontOfSize:15] width:targetCell.detail.frame.size.width];
-            
-            CGFloat hhh=originalHeight + size.height-18;
-            NSNumber *num = [NSNumber numberWithFloat:hhh];
-            [heightArr replaceObjectAtIndex:indexPath.row withObject:num];
-            [showArr replaceObjectAtIndex:indexPath.row withObject:@"Yes"];
-            NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:[cellArr objectAtIndex:indexPath.row]];
-            [mutDict setObject:@"0" forKey:@"tag"];
-            [cellArr replaceObjectAtIndex:indexPath.row withObject:mutDict];
-        }
-        else{
+        if(![targetCell.type isEqualToString:@"011"])
+        {
+            targetCell.selected = YES;
+            if (targetCell.frame.size.height == originalHeight){
+                CGSize size = [targetCell.detail.text getStringSize:[UIFont systemFontOfSize:15] width:targetCell.detail.frame.size.width];
+                
+                CGFloat hhh=originalHeight + size.height-18;
+                NSNumber *num = [NSNumber numberWithFloat:hhh];
+                [heightArr replaceObjectAtIndex:indexPath.row withObject:num];
+                [showArr replaceObjectAtIndex:indexPath.row withObject:@"Yes"];
+                NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:[cellArr objectAtIndex:indexPath.row]];
+                [mutDict setObject:@"0" forKey:@"tag"];
+                [cellArr replaceObjectAtIndex:indexPath.row withObject:mutDict];
+            }
+            else{
                 NSNumber *num = [NSNumber numberWithFloat:originalHeight];
                 [heightArr replaceObjectAtIndex:indexPath.row withObject:num];
                 [showArr replaceObjectAtIndex:indexPath.row withObject:@"NO"];
-
+                
+                
+            }
+            //刷新单行
+            [self.tbView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
-    //刷新单行
-        [self.tbView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        else
+        {
+            NSString *herfStr = targetCell.herfUrl;
+            NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:[cellArr objectAtIndex:indexPath.row]];
+            [mutDict setObject:@"0" forKey:@"tag"];
+            [cellArr replaceObjectAtIndex:indexPath.row withObject:mutDict];
+            //刷新单行
+            [self.tbView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            if(herfStr.length > 0)
+            {
+                [self jumpToWeb:herfStr];
+            }
+        }
+        
     }
  
+}
+-(void)jumpToWeb:(NSString *)herfStr
+{
+    BannerDetailViewController *banner = [[BannerDetailViewController alloc]init];
+    banner.herfStr = herfStr;
+    [self.navigationController pushViewController:banner animated:YES];
 }
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {

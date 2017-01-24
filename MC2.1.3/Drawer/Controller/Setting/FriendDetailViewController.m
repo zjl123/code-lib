@@ -41,6 +41,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.headPotrail.layer.cornerRadius = 3.0f;
+    self.headPotrail.layer.masksToBounds = YES;
     self.remarksLabel.text = ZGS(@"IMRemarkTip");
     [self.conversationClick setTitle:ZGS(@"IMMessage") forState:UIControlStateNormal];
     self.conversationClick.layer.cornerRadius = 3;
@@ -75,7 +77,7 @@
        str = ZGS(@"IMAddBlack");
         _tipLabel.hidden = YES;
     }
-    self.tbArr = @[@{@"title":str,@"ico":@""},@{@"title":ZGS(@"delete"),@"ico":@""}];
+    self.tbArr = @[@{@"title":str,@"ico":@"block"},@{@"title":ZGS(@"delete"),@"ico":@"delete_white"}];
     tbView.tbArr = _tbArr;
     [tbView reloadData];
 }
@@ -163,7 +165,16 @@
 
 -(void)isremark
 {
-    if (_model.remarksName.length > 0) {
+    if(_model.userFriRemark.length > 0)
+    {
+        _name.hidden = YES;
+        _remark1.hidden = NO;
+        _remark2.hidden = NO;
+        _remark1.text = _model.userFriRemark;
+        _remark2.text = [NSString stringWithFormat:ZGS(@"IMRemark"),_model.name];
+
+    }
+    else if (_model.remarksName.length > 0) {
         
         _name.hidden = YES;
         _remark1.hidden = NO;
@@ -197,8 +208,15 @@
     remarkVC.transDelegate = self;
     [self.navigationController pushViewController:remarkVC animated:YES];
 }
+#pragma -mark TransformValueDelegate
 -(void)transformValues:(NSString *)value
 {
+    RCUserInfo *info = [[RCUserInfo alloc]init];
+    info.userId = _model.userId;
+    info.name = value;
+    info.portraitUri = _model.portraitUri;
+    //_model.name = value;
+    [[RCIM sharedRCIM]refreshUserInfoCache:info withUserId:_model.userId];
     _model.remarksName = value;
     [self isremark];
 }
@@ -233,6 +251,7 @@
 - (IBAction)Conversation:(id)sender {
     IMRCChatViewController *conversation = [[IMRCChatViewController alloc]init];
     conversation.conversationType = ConversationType_PRIVATE;
+    conversation.title = _model.name;
     conversation.targetId = _model.userId;
     [self.navigationController pushViewController:conversation animated:YES];
 }
@@ -320,18 +339,6 @@
             [alertView show];
         }
     }];
-    
-    
-//    [manager GET:getUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        // NSLog(@"%@",dict);
-//        dict = [PwdEdite decoding:dict];
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
-
 }
 -(void)thread2
 {
@@ -356,18 +363,7 @@
 {
     //添加黑名单
     NSMutableArray *mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:@"friend"]];
-//    for (NSDictionary *dict in mutArr) {
-//        static int i = 0;
-//        if([dict[@"userId"] isEqualToString:_model.userId])
-//        {
-//            NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:dict];
-//            [mutDict setObject:@"4" forKey:@"status"];
-//            [mutArr replaceObjectAtIndex:i withObject:mutDict];
-//            
-//            break;
-//        }
-//        i++;
-//    }
+
     for (int i = 0; i < mutArr.count; i++) {
         NSDictionary *dict = mutArr[i];
         if([dict[@"userId"] isEqualToString:_model.userId])

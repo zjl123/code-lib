@@ -20,21 +20,32 @@
     }
     return self;
 }
+-(void)awakeFromNib
+{
+    [super awakeFromNib];
+    self.imgView.clipsToBounds = YES;
+    self.imgView.layer.cornerRadius = 5.0f;
+}
 -(void)setModel:(IMUserModel *)model
 {
     _model = model;
+    self.imgView.image = nil;
     self.title.text = model.name;
     if(model.remarksName.length > 0)
     {
         self.title.text = model.remarksName;
     }
+    if (model.userFriRemark.length > 0) {
+        self.title.text = model.userFriRemark;
+    }
     if ([_model.portraitUri hasPrefix:@"http"]||model.portraitUri == nil) {
-        [self.imgView sd_setImageWithURL:[NSURL URLWithString:model.portraitUri] placeholderImage:[UIImage imageNamed:@"contact"]];
+       [self.imgView sd_setImageWithURL:[NSURL URLWithString:model.portraitUri] placeholderImage:[UIImage imageNamed:@"contact"]];
     }
     else
     {
         self.imgView.image = [UIImage imageNamed:model.portraitUri];
     }
+    
     
 }
 @end

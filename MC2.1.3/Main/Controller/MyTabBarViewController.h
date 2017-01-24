@@ -24,5 +24,6 @@
 @property(nonatomic,strong)MessageViewController *message;
 @property(nonatomic,strong)InvestViewController *descover;
 @property(nonatomic,strong)HomeTableViewController *home;
+@property(nonatomic,strong)UIViewController *currentController;
 -(void)response2:(NSNotification *)n;
 @end

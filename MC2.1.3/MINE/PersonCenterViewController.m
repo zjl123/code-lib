@@ -30,6 +30,9 @@
 #import "MyNavViewController.h"
 #import "BgImgButton.h"
 #import "UINavigationItem+TbData.h"
+#import "NSString+Exten.h"
+#import "JPUSHService.h"
+#import "Server.h"
 #define GOLDNAVCOLOR(a) [UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:(a)]
 #define HEADHEIGHT 200
 @interface PersonCenterViewController () <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIAlertViewDelegate,LogDelegate,UIScrollViewDelegate,UIGestureRecognizerDelegate,UITableViewDataSource,UITableViewDelegate>
@@ -51,8 +54,12 @@
     int lll;
     UIView *bgView;
     BgImgButton *logoBtn;
-    UIView *unLogView;
+    UILabel *unLoglabel;
+    NSTimer *timer;
+   // UITapGestureRecognizer *unLogViewTap;
 }
+//未登录时的遮罩层
+@property(nonatomic,retain)UIView *unLogView;
 @end
 
 @implementation PersonCenterViewController
@@ -84,45 +91,41 @@
     [self setUpAdd];
     tbView = nil;
     self.isRefresh = NO;
-    NSUserDefaults *userdefault = [NSUserDefaults new];
-    NSInteger num = [userdefault integerForKey:@"login"];
-    lll = (int)num;
-    
-    if(num == 1)
-    {
-        _isLog = YES;
-        collView.scrollEnabled = YES;
-        
-    }
-    else
-    {
-        _isLog = NO;
-        [collView setContentOffset:CGPointMake(0, 0)];
-        collView.scrollEnabled = NO;
-    }
-    
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    CGFloat y = collView.contentOffset.y;
+    if(y <= 50)
+    {
+        [self.navigationController setNavigationBarHidden:YES animated:animated];
+    }
+    else
+    {
+        self.navigationController.navigationBar.alpha = 1.0f;
+        self.navigationController.navigationBar.translucent = YES;
+    }
     addBtn.hidden = NO;
     logoBtn.hidden = NO;
-    NSInteger num = [DEFAULT integerForKey:@"login"];
-    if(lll != num)
-    {
-        lll = (int)num;
+    NSUserDefaults *userdefault = [NSUserDefaults new];
+    NSInteger num = [userdefault integerForKey:@"login"];
+   // if(lll != num)
+   // {
+      //  lll = (int)num;
         if(num == 1)
         {
             _isLog = YES;
+            self.unLogView.hidden = YES;
             collView.scrollEnabled = YES;
         }
         else
         {
             _isLog = NO;
+            self.unLogView.hidden = NO;
             [collView setContentOffset:CGPointMake(0, 0)];
             collView.scrollEnabled = NO;
         }
-    }
+ //   }
     
 //每次都要走的
     if(collView.numberOfSections > 0)
@@ -139,13 +142,19 @@
     }
     
     a = 0;
-//nav的设置
+
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    //nav的设置
     CGFloat y = collView.contentOffset.y;
-    if(y == 0)
+    if(y <= 50)
     {
 #if KMIN
-        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
-        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:36/255.0 green:157/255.0 blue:238/255.0 alpha:0]];
+        [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[BLUECOLOR colorWithAlphaComponent:0]] forBarMetrics:UIBarMetricsDefault];
+        self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[BLUECOLOR colorWithAlphaComponent:0]];
 #elif KGOLD
         [self.navigationController.navigationBar setBackgroundImage:[UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]] forBarMetrics:UIBarMetricsDefault];
         self.navigationController.navigationBar.shadowImage = [UIImage imagewithColor:[UIColor colorWithRed:3/255.0 green:3/255.0 blue:3/255.0 alpha:0]];
@@ -155,7 +164,7 @@
     else
     {
         self.navigationController.navigationBar.alpha = 0.9;
-
+        
     }
     self.navigationController.navigationBar.translucent = YES;
 #if KMIN
@@ -194,6 +203,24 @@
         }
         self.navigationController.navigationBar.alpha = y/222;
     }
+}
+-(void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    CGFloat y = scrollView.contentOffset.y+StatuesHeight+self.navigationController.navigationBar.frame.size.height;
+    if(y < HEADHEIGHT*2/3)
+    {
+        // collView setcont
+        [collView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else if(y <= HEADHEIGHT)
+    {
+        self.navigationController.navigationBar.alpha  = 0.9;
+    }
+    else
+    {
+        self.navigationController.navigationBar.alpha = 0.9;
+    }
+
 }
 -(void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
@@ -240,11 +267,10 @@
    // [collView registerClass:[SecendCollectionViewCell class] forCellWithReuseIdentifier:@"csecend"];
     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"ewq"];
     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"qwe"];
+     [collView registerClass:[FunctionCollectionViewCell class] forCellWithReuseIdentifier:@"kkk"];
     UINib *nib = [UINib nibWithNibName:@"HeaderCollectionReusableView" bundle:nil];
     [collView registerNib:nib forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"header"];
     redDict = [userDefault objectForKey:@"hotmenu"];
-    
-    collView.pinchGestureRecognizer.delegate = self;
 }
 -(void)loginClick:(UIButton *)btn
 {
@@ -261,53 +287,10 @@
     }
     if(alertView.tag == 501&&buttonIndex == 1)
     {
-        [self loginout];
+       // [self loginout];
+        [[Server shareInstance] loginout:self];
     }
     
-}
-#pragma loginout
--(void)loginout
-{
-    
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    NSDictionary *paramers = [[NSDictionary alloc]initWithObjectsAndKeys:@"logout",@"cmd",nil];
-    [[DataManager shareInstance]ConnectServer:STRURL parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
-        if(resultBlock)
-        {
-            if([resultBlock count] > 0 && [[resultBlock objectForKey:@"ret"] intValue] == 0)
-            {
-                [[RCIM sharedRCIM] disconnect:YES];
-                UIAlertView *av=[[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"logoutSuc") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-                [av show];
-                av.delegate = self;
-                av.tag = 500;
-                NSString *str = @"0";
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"cart" object:str];
-                [userDefault setInteger:3 forKey:@"autoLogin"];
-                [userDefault setInteger:0 forKey:@"login"];
-                [userDefault removeObjectForKey:@"entryptPwd"];
-                [userDefault removeObjectForKey:@"username"];
-                [userDefault removeObjectForKey:@"usercat"];
-                [userDefault removeObjectForKey:@"tk"];
-                [userDefault removeObjectForKey:@"IMToken"];
-                NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:@"login",@"login",@[],@"msg", nil];
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:dict];
-                [[UIApplication sharedApplication]setApplicationIconBadgeNumber:0];
-            }
-            else
-            {
-                UIAlertView *av=[[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"logoutAgain") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-                av.tag = 505;
-                [av show];
-            }
-
-        }
-        else
-        {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"exception") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-            [alert show];
-        }
-    }];
 }
 
 #pragma -mark login
@@ -328,7 +311,12 @@
     {
         NSDictionary *dict = sectionArr[section];
         NSArray *arr = dict[@"item"];
-        return arr.count;
+        NSInteger num = arr.count;
+        if(num%2 != 0)
+        {
+            num+=1;
+        }
+        return num;
     }
 }
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -355,23 +343,36 @@
     {
         NSDictionary *dict = sectionArr[indexPath.section];
         NSArray *arr = dict[@"item"];
-        NSDictionary *infoDict = arr[indexPath.row];
-        NSString *bgColor = infoDict[@"label3"];
-        if(bgColor.length > 0)
+        if(indexPath.row < arr.count)
         {
-            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ewq" forIndexPath:indexPath];
-            
-            cell.dict = infoDict;
-            cell.redDict = redDict;
-             return cell;
+            NSDictionary *infoDict = arr[indexPath.row];
+            NSString *bgColor = infoDict[@"label3"];
+            if(bgColor.length > 0)
+            {
+                FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ewq" forIndexPath:indexPath];
+                
+                cell.dict = infoDict;
+                cell.redDict = redDict;
+                 return cell;
+            }
+            else
+            {
+                FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"qwe" forIndexPath:indexPath];
+                cell.dict =  infoDict;
+                cell.redDict = redDict;
+                return cell;
+                
+            }
         }
         else
         {
-            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"qwe" forIndexPath:indexPath];
-            cell.dict =  infoDict;
-            cell.redDict = redDict;
+            FunctionCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"kkk" forIndexPath:indexPath];
+            cell.titleName.text = @"";
+            cell.subTitle.text = @"";
+            cell.redPoint.hidden = YES;
+            cell.icon = nil;
             return cell;
-            
+
         }
     
     }
@@ -383,7 +384,7 @@
 {
     if(indexPath.section == 0)
     {
-        return CGSizeMake(width1, 200);
+        return CGSizeMake(width1, HEADHEIGHT);
     }
     else
     {
@@ -432,27 +433,30 @@
     }
     else
     {
-        NSDictionary *dict = sectionArr[indexPath.section];
-        NSArray *arr = dict[@"item"];
-        NSDictionary *detailDict = arr[indexPath.row];
-        NSString *strUrl = detailDict[@"act"];
-        if(strUrl.length > 0)
-        {
-            if([strUrl rangeOfString:@"#invit"].location != NSNotFound)
+            NSDictionary *dict = sectionArr[indexPath.section];
+            NSArray *arr = dict[@"item"];
+            if(indexPath.row < arr.count)
             {
-                NSArray *arr = [Tool getShareParams:strUrl];
-                [self share:arr];
-            }
-            else if ([strUrl rangeOfString:@"#callapp"].location != NSNotFound)
+            NSDictionary *detailDict = arr[indexPath.row];
+            NSString *strUrl = detailDict[@"act"];
+            if(strUrl.length > 0)
             {
-                NSArray *arr =  [Tool getShareParams:strUrl];
-                [self callApp:arr];
-            }
+                if([strUrl rangeOfString:@"#invit"].location != NSNotFound)
+                {
+                    NSArray *arr = [Tool getShareParams:strUrl];
+                    [self share:arr];
+                }
+                else if ([strUrl rangeOfString:@"#callapp"].location != NSNotFound)
+                {
+                    NSArray *arr =  [Tool getShareParams:strUrl];
+                    [self callApp:arr];
+                }
 
-            else
-            {
-                //NSString *str = [NSString stringWithFormat:@"%@&uap=ios",strUrl];
-                [self jumpDetail:strUrl];
+                else
+                {
+                    //NSString *str = [NSString stringWithFormat:@"%@&uap=ios",strUrl];
+                    [self jumpDetail:strUrl];
+                }
             }
         }
     }
@@ -607,6 +611,9 @@
 #pragma -mark rightBtnClick:
 -(void)rightBtnClick:(UIButton *)btn
 {
+    [[UIApplication sharedApplication]setApplicationIconBadgeNumber:0];
+    [JPUSHService setBadge:0];
+
 #if KGOLD
     [self setUpTbView:btn];
 #elif KMIN
@@ -627,6 +634,12 @@
             NSString *str = @"isLogin";
             NSDictionary *dict = @{@"login":@"login",@"msg":@[]};
             [[NSNotificationCenter defaultCenter]postNotificationName:str object:dict];
+            
+           // NSInteger oldNum = [[userDefault objectForKey:@"msgcount"] integerValue];
+            [userDefault setObject:@"0" forKey:@"msgcount"];
+          //  NSInteger aNum = [[UIApplication sharedApplication]applicationIconBadgeNumber];
+            
+                       // [[UIApplication sharedApplication]setApplicationIconBadgeNumber:0];
             NSUserDefaults *userDefault = [NSUserDefaults new];
             [userDefault setObject:nil forKey:@"messasge"];
         }
@@ -691,11 +704,10 @@
     [tbView.layer addAnimation:animation forKey:@"animation"];
     tbView.hidden = YES;
 }
-
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    NSLog(@"%@",[touch.view.superview class]);
-    NSLog(@"%@",[gestureRecognizer.view class]);
+   // NSLog(@"%@",[touch.view.superview class]);
+   // NSLog(@"%@",[gestureRecognizer.view class]);
     //截获手势（解决手势冲突问题）
     if([touch.view.superview isKindOfClass:[UITableViewCell class]])
     {
@@ -843,4 +855,81 @@
 {
     [self jumpDetail:url];
 }
+-(UIView *)unLogView
+{
+    if(!_unLogView)
+    {
+        _unLogView = [[UIView alloc]init];
+        _unLogView.backgroundColor = [UIColor clearColor];//[[UIColor redColor] colorWithAlphaComponent:0.3];
+        _unLogView.frame = CGRectMake(0, 160, width1, height1-TABANOHEIGHT-HEADHEIGHT);
+        [self.view insertSubview:_unLogView aboveSubview:collView];
+        //点击
+        UITapGestureRecognizer *unLogViewTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(unlogTap:)];
+        [_unLogView addGestureRecognizer:unLogViewTap];
+        //滑动
+        
+        UISwipeGestureRecognizer *swipDown = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(unLogSwipDown:)];
+        swipDown.direction = UISwipeGestureRecognizerDirectionDown;
+        [_unLogView addGestureRecognizer:swipDown];
+        
+        
+        UISwipeGestureRecognizer *swipUp = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(unLogSwipUp:)];
+        swipUp.direction = UISwipeGestureRecognizerDirectionUp;
+        [_unLogView addGestureRecognizer:swipUp];
+    }
+    return _unLogView;
+}
+-(void)unlogTap:(UITapGestureRecognizer *)gesture
+{
+    NSLog(@"未登录");
+    [self unLogTipView];
+}
+-(void)unLogSwipDown:(UISwipeGestureRecognizer *)gesture
+{
+    NSLog(@"下未登录");
+    [self unLogTipView];
+}
+-(void)unLogSwipUp:(UISwipeGestureRecognizer *)gesture
+{
+    NSLog(@"上未登录");
+    [self unLogTipView];
+}
+-(void)unLogTipView
+{
+    if(!unLoglabel)
+    {
+        CGSize size = [ZGS(@"unLog") getStringSize:[UIFont systemFontOfSize:12] width:width1];
+        CGFloat w = size.width+20;
+        CGFloat h = size.height+15;
+        CGFloat y = _unLogView.frame.size.height-50-h;
+        unLoglabel = [[UILabel alloc]initWithFrame:CGRectMake((width1-w)/2, y,w , h)];
+        unLoglabel.backgroundColor = RGB(96, 96, 96);
+        unLoglabel.textColor = [UIColor whiteColor];
+        unLoglabel.font = [UIFont systemFontOfSize:12];
+        unLoglabel.textAlignment = NSTextAlignmentCenter;
+        unLoglabel.text = ZGS(@"unLog");
+        unLoglabel.layer.cornerRadius = h/2;
+        unLoglabel.layer.masksToBounds = YES;
+        [_unLogView addSubview:unLoglabel];
+    }
+    unLoglabel.hidden = NO;
+    
+    __weak typeof(self)vc = self;
+    
+    timer =  [NSTimer scheduledTimerWithTimeInterval:0.5f target:vc selector:@selector(unLogHidden) userInfo:nil repeats:NO];
+    //10以后的方法
+    //    [NSTimer scheduledTimerWithTimeInterval:0.5f repeats:NO block:^(NSTimer * _Nonnull timer) {
+    //        unLoglabel.hidden = YES;
+    //    }];
+}
+-(void)unLogHidden
+{
+    unLoglabel.hidden = YES;
+}
+-(void)dealloc
+{
+    [timer invalidate];
+    timer = nil;
+}
+
 @end

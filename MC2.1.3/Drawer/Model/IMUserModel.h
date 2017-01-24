@@ -18,5 +18,6 @@
 /**备注名*/
 @property (nonatomic, retain) NSString *remarksName;
 @property (nonatomic, retain) NSString *phoneNum;
+@property (nonatomic, retain) NSString *userFriRemark;
 -(id)initWithDictionary:(NSDictionary *)dict;
 @end

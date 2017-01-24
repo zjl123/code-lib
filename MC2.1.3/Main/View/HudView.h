@@ -13,4 +13,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *tipLabel;
 @property (assign, nonatomic) CGFloat time;
 -(void)stopShow;
+-(void)startShow;
 @end

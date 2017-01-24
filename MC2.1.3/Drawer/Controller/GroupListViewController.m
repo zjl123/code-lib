@@ -12,6 +12,7 @@
 #import "UIImageView+WebCache.h"
 #import "IMRCChatViewController.h"
 #import "RCIMDataSource.h"
+#import "RCDUtilities.h"
 @interface GroupListViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tbView;
 
@@ -61,9 +62,16 @@
     
     NSDictionary *dict = _groupArr[indexPath.row];
     cell.name.text = dict[@"groupName"];
-    NSURL *url = [NSURL URLWithString:dict[@"groupImg"]];
+    NSString *imgUrl = dict[@"groupImg"];
+    if(imgUrl.length <= 0)
+    {
+        RCGroup *group = [[RCGroup alloc]init];
+        group.groupId = dict[@"groupId"];
+        group.groupName = dict[@"groupName"];
+        imgUrl = [RCDUtilities defaultGroupPortrait:group];
+    }
+    NSURL *url = [NSURL URLWithString:imgUrl];
     [cell.headPortrait sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"default_group_portrait"]];
-    
     return cell;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

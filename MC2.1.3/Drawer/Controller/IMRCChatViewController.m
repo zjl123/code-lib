@@ -13,9 +13,11 @@
 #import "GroupInfoSettingViewController.h"
 #import "RCIMDataSource.h"
 #import "PrivateInfoSettingViewController.h"
+#import <MediaPlayer/MediaPlayer.h>
 @interface IMRCChatViewController ()<RCMessageCellDelegate>
 {
     NSArray *groupMemberArr;
+    UIButton *backBtn;
 }
 @end
 
@@ -24,6 +26,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+   // self.navigationController.navigationBar.backItem.title = @"222";
+    [MPMusicPlayerController applicationMusicPlayer];
+   // musicPlayer.volume = 0.5f;
+    self.navigationController.navigationBar.topItem.title = @"";
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.navigationItem setHidesBackButton:YES];
+    [[RCIM sharedRCIM] setGlobalNavigationBarTintColor:BLUECOLOR];
+    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+
+    // backBtn.backgroundColor = [UIColor greenColor];
+    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:backBtn];
+
+    
+    SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
+    searchView.hidden = YES;
     //群
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = CGRectMake(0, 0, 30, 30);
@@ -45,11 +67,25 @@
     //删除聊天记录
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(ClearHistoryMsg:) name:@"ClearHistoryMsg" object:nil];
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    backBtn.hidden = NO;
+}
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+    backBtn.hidden = YES;
+   
+}
+-(void)dealloc
+{
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"renameGroupName" object:nil];
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"ClearHistoryMsg" object:nil];
+}
+-(void)leftBtnclick:(UIBarButtonItem *)item
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 -(void)renameGroupName:(NSNotification *)notify
 {
@@ -85,7 +121,7 @@
     if (self.conversationType == ConversationType_GROUP ||
         self.conversationType == ConversationType_DISCUSSION||self.conversationType == ConversationType_PRIVATE) {
         if (![userId isEqualToString:[RCIM sharedRCIM].currentUserInfo.userId]) {
-            NSLog(@"ccccc");
+            //NSLog(@"ccccc");
             
             //跳转到详情（是好友跳转到好友详情，不是好友跳转到添加好友）
             
@@ -93,7 +129,7 @@
             BOOL isFriend = NO;
             NSDictionary *friendDict;
             for (NSDictionary *dict in mutArr) {
-                if ([dict[@"userId"] isEqualToString:self.targetId]) {
+                if ([dict[@"userId"] isEqualToString:userId]) {
                     friendDict = dict;
                     isFriend = YES;
                     break;
@@ -105,7 +141,8 @@
             }
             else
             {
-                [self goToAddFriend:self.targetId];
+                
+                [self goToAddFriend:userId];
             }
         } else {
             NSString *userId = [RCIM sharedRCIM].currentUserInfo.userId;
@@ -115,7 +152,7 @@
             }
             NSString *userName = [DEFAULT objectForKey:@"username"];
             userName = [Tool judgeNil:userName];
-            NSString *userPotrail = [RCIM sharedRCIM].currentUserInfo.portraitUri;
+            NSString *userPotrail = [DEFAULT objectForKey:@"headImg"];
             userPotrail = [Tool judgeNil:userPotrail];
             NSDictionary *dict = @{@"userId":userId,@"userName":userName,@"userImg":userPotrail};
             [self goToFriendDetail:dict];
@@ -130,6 +167,7 @@
 }
 -(void)goToAddFriend:(NSString *)userId
 {
+    
     IMAddFirendViewController *addFriend = [[IMAddFirendViewController alloc]initWithNibName:@"IMAddFirendViewController" bundle:nil];
     addFriend.userID = userId;
     [self.navigationController pushViewController:addFriend animated:YES];

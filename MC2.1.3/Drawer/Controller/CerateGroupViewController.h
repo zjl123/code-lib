@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "HeadDetailViewController.h"
+
+@protocol ProtrailDelegate <NSObject>
+
+-(void)transProtrailUrl:(NSString *)protrailUrl;
+
+@end
 @interface CerateGroupViewController : HeadDetailViewController
 @property(retain, nonatomic) NSArray *useridArr;
+@property (assign, nonatomic) BOOL isCreate;
+@property (weak, nonatomic) id <ProtrailDelegate>proDelegate;
 @end

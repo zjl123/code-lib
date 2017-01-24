@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-
 @interface FriendVerifyViewController : UIViewController
 @property (nonatomic,retain) NSString *name;
 @property (nonatomic,retain) NSString *userID;

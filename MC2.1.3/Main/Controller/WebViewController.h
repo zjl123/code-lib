@@ -11,7 +11,8 @@
 #import "GreyView.h"
 #import "ActivityView.h"
 #import "SearchView.h"
-@interface WebViewController : UIViewController
+#import <WebKit/WebKit.h>
+@interface WebViewController : UIViewController<UIWebViewDelegate>
 {
     UIWebView *web;
     NSString *strurl;
@@ -19,6 +20,7 @@
 @property(nonatomic, retain)UILabel *label;
 @property(nonatomic, retain)GreyView *greyView;
 @property(nonatomic, retain)ActivityView *activity;
+@property(nonatomic, retain)UIButton *backBtn;
 @property (nonatomic ,assign)BOOL isTitle;
 -(void)activituStartShow;
 -(void)activityStopShow;

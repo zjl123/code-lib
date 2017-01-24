@@ -21,6 +21,7 @@
     // Initialization code
     [super awakeFromNib];
     _web.scrollView.backgroundColor = [UIColor clearColor];
+    _web.scrollView.showsVerticalScrollIndicator = NO;
     _web.opaque = NO;
     _web.delegate = self;
     _web.scrollView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -45,6 +46,7 @@
     _strUrl = strUrl;
     NSString *lg = [Tool getPreferredLanguage];
     _strUrl = [NSString stringWithFormat:@"%@&uap=iOS&lg=%@",_strUrl,lg];
+   //  _strUrl = [NSString stringWithFormat:@"%@&uap=iOS",_strUrl];
     [_web.scrollView.mj_header beginRefreshing];
 }
 -(void)webViewDidStartLoad:(UIWebView *)webView

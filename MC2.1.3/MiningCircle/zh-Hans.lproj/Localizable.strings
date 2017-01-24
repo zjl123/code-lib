@@ -8,7 +8,7 @@
 "login" = "登录";
 "UserName" = "账号";
 "pwd" = "密码";
-"unLog" = "未登录，请先登录！";
+"unLog" = "未登录，请先登录!";
 "autoLogin" = "自动登录";
 "register" = "注册";
 "ForgotPassWord" = "忘记密码";
@@ -43,6 +43,7 @@
 "pwderror" = "当前密码不正确";
 "errorTip" = "两次密码不同,请重新输入!";
 "sendSuc" = "发送成功";
+"sendFailed" = "发送失败";
 "locationtTip" = "需要开启定位服务，请到设置->隐私，打开定位服务";
 "tipMessage" = "提示信息";
 "messageFunc" = "该设备不支持短信功能";
@@ -61,7 +62,7 @@
 "usableAsset" = "可用余额：";
 "totalProfile" = "总：";
 "lastProfile" = "收 益   昨：";
-"currentV" = "当前版本2.1.3（Build2k161129）";
+"currentV" = "当前版本2.1.7（Build2k170120）";
 "rightN" = "立即体验";
 "KYQ" = "矿业圈";
 "cartLog" = "登录以后才能查看^_^";
@@ -139,7 +140,7 @@
 "IMDeleTip" = "将联系人'%@'删除，将同时删除与该联系人的聊天纪录";
 "IMRemark" = "昵称：%@";
 "IMRemarkTip" = "设置备注名和标签";
-"IMMessage" = "发起群聊";
+"IMMessage" = "发起会话";
 "IMAdd" = "添加好友";
 "IMClearHis" = "清除聊天记录";
 "IMTop" = "会话置顶";
@@ -152,3 +153,7 @@
 "IMAdded" = "已添加";
 "IMFailed" = "同意失败";
 "IMMobile" = "手机通讯录";
+"Gticket" = "领券";
+"Gpromotion" = "促销";
+"Create" = "创建";
+"Modify" = "修改";

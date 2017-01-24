@@ -11,6 +11,7 @@
 #import "Tool.h"
 #import "DataManager.h"
 #import "PwdEdite.h"
+#import <RongIMKit/RongIMKit.h>
 @interface RemarkNameViewController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *remarkLabel;
 @property (weak, nonatomic) IBOutlet UITextField *remarkField;
@@ -28,6 +29,7 @@
     // Do any additional setup after loading the view from its nib.
     self.remarkLabel.text = self.remarkTip;
     self.remarkField.text = self.remarkFieldTip;
+    self.remarkField.returnKeyType = UIReturnKeyDone;
     saveBtn = [ImgButton buttonWithType:UIButtonTypeCustom];
     saveBtn.frame = CGRectMake(0, 0, 50, 32);
     saveBtn.title = ZGS(@"save");
@@ -70,9 +72,24 @@
         return NO;
     }
 }
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if([textField.text isEqualToString:originalStr])
+    {
+        [textField resignFirstResponder];
+    }
+    else
+    {
+        [self saveClick:saveBtn];
+    }
+
+    
+    return YES;
+}
 -(void)saveClick:(ImgButton *)sender
 {
-    NSLog(@"hhhhhh");
+   // NSLog(@"hhhhhh");
+    sender.userInteractionEnabled = NO;
     if([_judgeStr isEqualToString:@"qun"])
     {
         [self modifyGroupName];
@@ -110,28 +127,18 @@
         }
 
     }];
-    
-    
-    
-//    [manager GET:getStr parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        NSLog(@"%@",dict);
-//            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
-
 }
 #pragma -mark 修改群聊名称
 -(void)modifyGroupName
 {
     NSString *getStr = [NSString stringWithFormat:@"%@rongyun.do?groupNameRemark&groupId=%@&groupName=%@&opration=Rename",MAINURL,self.userid,self.remarkField.text];
     getStr = [getStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *userName = [DEFAULT objectForKey:@"username"];
     NSDictionary *paramers = @{@"data":@{@"operatorNickname":userName,@"targetGroupName":self.remarkField.text}};
     [[DataManager shareInstance]ConnectServer:getStr parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
         if([resultBlock[@"code"] integerValue] == 200)
         {
+            
             [self.transDelegate transformValues:_remarkField.text];
             [[NSNotificationCenter defaultCenter]postNotificationName:@"renameGroupName" object:self.remarkField.text];
             [self.navigationController popViewControllerAnimated:YES];
@@ -165,12 +172,11 @@
 #pragma -mark 修改备注名
 -(void)postServer
 {
-    //AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *sourceId = [DEFAULT objectForKey:@"userid"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?nameRemark&sourceUserId=%@&targetUserId=%@&remarkName=%@",MAINURL,sourceId,_userid,_remarkField.text];
     getUrl = [getUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
-        if([resultBlock[@"code"] integerValue] == 400)
+        if([resultBlock[@"code"] integerValue] == 200)
         {
             [self.transDelegate transformValues:_remarkField.text];
             NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(saveName) object:nil];
@@ -180,6 +186,7 @@
         else
         {
             [self alertShow:@"修改失败"];
+            saveBtn.userInteractionEnabled = YES;
         }
 
     }];
@@ -187,8 +194,11 @@
 -(void)saveName
 {
     mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:@"friend"]];
-    for (NSDictionary *dict in mutArr) {
-        static int i = 0;
+    NSArray *arr = [NSArray arrayWithArray:mutArr];
+    
+    
+    for (int i = 0; i < arr.count; i++) {
+        NSDictionary *dict = arr[i];
         NSString *userid = dict[@"userId"];
         if([userid isEqualToString:_userid])
         {
@@ -197,13 +207,14 @@
             [mutDict setObject:_remarkField.text forKey:@"nameRemark"];
             [mutArr replaceObjectAtIndex:i withObject:mutDict];
             //写入文件
-           [Tool writeToFile:mutArr withPath:@"friend"];
+            [Tool writeToFile:mutArr withPath:@"friend"];
             break;
             
+            
         }
-        i++;
+
     }
-} 
+}
 -(void)alertShow:(NSString *)str
 {
     UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:str delegate:self cancelButtonTitle:ZGS(@"ok") otherButtonTitles:nil, nil];

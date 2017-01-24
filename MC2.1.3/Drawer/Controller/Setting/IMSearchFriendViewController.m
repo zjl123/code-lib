@@ -35,6 +35,7 @@
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    [searchBar resignFirstResponder];
     NSString *str = searchBar.text;
     if(str.length > 0)
     {
@@ -63,6 +64,8 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [_searchBar resignFirstResponder];
+    
     //已经是好友跳转到详细资料里，不是好友跳转到添加好友里
     NSDictionary *dict = resultArr[indexPath.row];
     NSString *userid = dict[@"userId"];
@@ -112,18 +115,6 @@
         }
 
     }];
-    
-    
-//    [manager GET:getUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//        NSLog(@"dict%@",dict);
-//        
-//            } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

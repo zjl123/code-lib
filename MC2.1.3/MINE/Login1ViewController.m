@@ -20,6 +20,8 @@
 //#import <RongIMKit/RongIMKit.h>
 #import "RCIMDataSource.h"
 #import "AppDelegate.h"
+#import "JPUSHService.h"
+#import "Server.h"
 @interface Login1ViewController ()
 {
     AFHTTPSessionManager *_manager;
@@ -53,6 +55,7 @@
 
     [_login setTitle:ZGS(@"login") forState:UIControlStateNormal];
     [_registerBtn setTitle:ZGS(@"register") forState:UIControlStateNormal];
+   // _registerBtn.titleLabel.contentMode = UIViewContentModeRight;
     [_forgetPwdBtn setTitle:ZGS(@"ForgotPassWord") forState:UIControlStateNormal];
     _userName.tag =400;
     _password.tag = 401;
@@ -82,7 +85,18 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapRemindPwd:)];
     self.remindPwdLabel.userInteractionEnabled = YES;
     [self.remindPwdLabel addGestureRecognizer:tap];
+    
+    
+    //通知
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+//     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
 }
+//-(void)viewWillDisappear:(BOOL)animated
+//{
+//    [super viewWillDisappear:animated];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+//}
 -(NSString *)getPassword
 {
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
@@ -221,7 +235,9 @@
         [DEFAULT setObject:usermobile forKey:@"usermobile"];
         NSString *userid = [resultBlock objectForKey:@"userid"];
         [DEFAULT setObject:userid forKey:@"userid"];
-        [self getMessage:userid];
+     //   [self getMessage:userid];
+        [[Server shareInstance] getMessage:userid];
+        
         [DEFAULT setObject:[resultBlock objectForKey:@"tk"] forKey:@"tk"];
         NSString *usercat = resultBlock[@"usercat"];
         [DEFAULT setObject:usercat forKey:@"usercat"];
@@ -267,95 +283,6 @@
     }
 
 }
--(void)getMessage:(NSString *)userid
-{
-    __block NSMutableArray *message = nil;
-    NSString *pathsandox = NSHomeDirectory();
- //   NSUserDefaults *userDefault = [NSUserDefaults new];
-    NSString *newPath = [NSString stringWithFormat:@"%@/Documents/%@/time.plist",pathsandox,userid];
-    NSDictionary *timeDict = [[NSDictionary alloc]initWithContentsOfFile:newPath];
-    NSString *postTime = timeDict[@"time"];
-    if(postTime == nil)
-    {
-        postTime = @"0";
-    }
-    NSDictionary *paramers = [[NSDictionary alloc]initWithObjectsAndKeys:@"getmsg",@"cmd",@"iOS",@"os",userid,@"userid",postTime,@"t", nil];
-   //  NSDictionary *params = [PwdEdite ecoding:dict];
-  //  _manager = [DataManager shareHTTPRequestOperationManager];
-    
-    [[DataManager shareInstance]ConnectServer:STRURL parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
-        message = [resultBlock objectForKey:@"msglist"];
-        if(message.count > 0)
-        {
-            NSMutableArray *mutArr = [NSMutableArray array];
-            for (int i = 0; i < message.count; i++) {
-                NSDictionary *dict = message[i];
-                NSMutableDictionary *mutdict = [NSMutableDictionary dictionaryWithDictionary:dict];
-                [mutdict setObject:@"1" forKey:@"tag"];
-                [mutArr addObject:mutdict];
-            }
-            NSUserDefaults *userDefault = [NSUserDefaults new];
-            [userDefault setObject:message forKey:@"messasge"];
-            time = resultBlock[@"t"];
-            NSThread *thresd1 = [[NSThread alloc]initWithTarget:self selector:@selector(thread:) object:mutArr];
-            [thresd1 start];
-            NSString *str = @"login";
-            NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:str,@"login",message,@"msg", nil];
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:dict];
-            [[UIApplication sharedApplication]setApplicationIconBadgeNumber:message.count];
-        }
-    }];
-    
-    
-//    [_manager POST:STRURL parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *obj = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        if(obj.count > 0)
-//        {
-//
-//            NSDictionary *result = [PwdEdite decoding:obj];
-//            
-//                }
-//
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
-
-}
-//
--(void)thread:(id)obj
-{
-    NSMutableArray *dataDict =  [NSMutableArray arrayWithArray:obj];  //(NSArray *)obj;
-    //把图片存起来
-    NSString *pathsandox = NSHomeDirectory();
-    NSUserDefaults *userDefault = [NSUserDefaults new];
-    NSString *userid = [userDefault objectForKey:@"userid"];
-    NSString *newPath = [NSString stringWithFormat:@"%@/Documents/%@",pathsandox,userid];
-    //写入plist文件
-    BOOL isDir = NO;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    BOOL existed = [fileManager fileExistsAtPath:newPath isDirectory:&isDir];
-    if ( !(isDir == YES && existed == YES) )
-    {
-        [fileManager createDirectoryAtPath:newPath withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    NSString *plistPath = [NSString stringWithFormat:@"%@/Documents/%@/msg.plist",pathsandox,userid];
-    NSArray *arr = [[NSArray alloc]initWithContentsOfFile:plistPath];
-    [dataDict addObjectsFromArray:arr];
-    if ([dataDict writeToFile:plistPath atomically:YES]) {
-        NSLog(@"写入成功");
-        
-    };
-    //写入时间
-    NSDictionary *timeDict = @{@"time":time};
-    NSString *timePath = [NSString stringWithFormat:@"%@/Documents/%@/time.plist",pathsandox,userid];
-    if ([timeDict writeToFile:timePath atomically:YES]) {
-        NSLog(@"写入成功");
-        
-    };
-}
-
 #pragma -mark 忘记密码
 - (IBAction)passwordForgeting:(UIButton *)sende{
 

@@ -9,10 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "AddressBookViewController.h"
 #import "IMGroupModel.h"
+#import "BackButtonViewController.h"
 //声明
 typedef void(^ReturnDataBlock)(NSDictionary *returnDict);
 
-@interface SelectGroupMemberViewController : UIViewController
+@interface SelectGroupMemberViewController : BackButtonViewController
 /**
  *判断是显示所有好友，还是某个群的所有成员
  */

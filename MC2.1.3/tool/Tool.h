@@ -9,9 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "BannerDetailViewController.h"
 @interface Tool : NSObject
+
++(Tool *)shareInstance;
 +(UIImage *)changeToImge:(NSString *)str;
 +(NSArray *)getShareParams:(NSString *)strUrl;
 +(NSMutableArray *)getAddressBook;
+-(void)getAddressBook:(void(^)(NSArray * addressArray))addressBlock;
 /**排序*/
 +(NSDictionary *)sort:(NSArray *)arr sortKey:(NSString *)key;
 /*
@@ -41,4 +44,13 @@
 +(NSString *)judgeNil:(NSString *)str;
 /**删除文件*/
 +(void)deleteFile:(NSString *)path;
+/**
+ * 判断单行显示label的高度
+ */
++(CGFloat)getLabelHight:(UIFont *)fontSize;
+/**
+ * 替换json里的null
+ */
++(NSDictionary *)replaceNull:(NSDictionary *)dict;
+-(NSTimeInterval)getCurrentData;
 @end

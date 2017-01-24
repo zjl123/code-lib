@@ -18,10 +18,14 @@
 #import "Tool.h"
 #import "NickNameViewController.h"
 #import "UIImage+Extension.h"
+#import "HudView.h"
+#import "SuccessHud.h"
 //#define ORIGINAL_MAX_WIDTH 640.0f
 @interface HeadDetailViewController ()<UITableViewDelegate,UITableViewDataSource,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,VPImageCropperDelegate,NickNameDelegate>
 {
     NSArray *titleArr;
+    HudView *hud;
+    SuccessHud *succcessHud;
 }
 @end
 
@@ -32,6 +36,11 @@
     // Do any additional setup after loading the view from its nib.
  //   self.navigationController.navigationBar.translucent = NO;
  //   [self.navigationController.navigationBar setBarTintColor:RGB(19, 19, 19)];
+    
+    
+   // UIBarButtonItem *item = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:nil action:nil];
+   // self.navigationItem.backBarButtonItem = item;
+
     self.title = ZGS(@"alertPhoto");
     titleArr = @[ZGS(@"photo"),ZGS(@"nickName")];
     
@@ -42,6 +51,8 @@
 
     UINib *nib = [UINib nibWithNibName:@"HeadDetailTableViewCell" bundle:nil];
     [_tbView registerNib:nib forCellReuseIdentifier:@"headDetail"];
+    
+    
     _tbView.scrollEnabled = NO;
     self.isPost = YES;
 }
@@ -358,9 +369,33 @@
     // Pass the selected object to the new view controller.
 }
 */
+-(void)loadHudView
+{
+    hud = [[HudView alloc]initWithFrame:CGRectMake(0, 0, 50, 50)];
+    hud.tipLabel.text = @"正在上传";
+    // hud.time = 3.0f;
+    hud.center = CGPointMake(width1/2, height1*1/3);
+    [hud startShow];
+    [self.view addSubview:hud];
+}
+-(void)showSuccessView
+{
+    //sue
+   // SuccessHud *succcessHud = [[SuccessHud alloc]init];
+   succcessHud  = [[SuccessHud alloc]initWithFrame:CGRectMake(0, 0, 50, 50)];
+  //  succcessHud.tipLabel.text = @"上传成功";
+    
+    succcessHud.center = CGPointMake(width1/2, height1/3);
+    [self.view addSubview:succcessHud];
+    
+}
 #pragma -mark loadToServer
 -(void)postToServer:(UIImage *)postImg
 {
+    if(_isPost)
+    {
+        [self loadHudView];
+    }
     AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
 #if KMIN
     NSString *str = [NSString stringWithFormat:@"%@upload/c",MAINURL];
@@ -393,29 +428,15 @@
             }
             else
             {
+
                 self.picLine = line;
+                self.modifyLine = line;
             }
         }
 
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
        NSLog(@"fail");
     }];
-}
--(void)sendGroupPic:(NSString *)line andGroupId:(NSString *)groupId
-{
-    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?savePic&imgUrl=%@&targetId=%@",MAINURL,line,groupId];
-    [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
-        
-    }];
-    
-    
-//    [manager GET:getUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//        NSLog(@"%@",dict);
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
 }
 #pragma -mark sendPic
 -(void)sendPic:(NSString *)line and:(NSString *)name
@@ -432,25 +453,9 @@
       //  dict = [PwdEdite ecoding:dict];
         
         [[DataManager shareInstance]ConnectServer:STRURL parameters:dict isPost:YES result:^(NSDictionary *resultBlock) {
-            
+            [hud stopShow];
+          //  [self showSuccessView];
         }];
-        
-//        AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-//        
-//        
-//        [manager POST:STRURL parameters:dict progress:^(NSProgress * _Nonnull uploadProgress) {
-//            
-//        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//            NSDictionary *result = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//            if(result.count > 0)
-//            {
-//                result = [PwdEdite decoding:result];
-//                NSLog(@"result---%@",result);
-//            }
-//        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//            
-//        }];
-//    
     }
 }
 @end

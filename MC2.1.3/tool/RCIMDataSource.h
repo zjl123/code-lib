@@ -58,5 +58,5 @@
  *  根据id获取群成员信息(本地)
  */
 -(NSArray *)getAllMembersFromLocalbyGroupId:(NSString *)groupId;
-
+-(void)saveGroupInfo:(NSDictionary *)dict;
 @end

@@ -16,7 +16,6 @@
 -(void)syncGroup
 {
     NSString *hostId = [DEFAULT objectForKey:@"userid"];
-  //  AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *geturl = [NSString stringWithFormat:@"%@rongyun.do?groupSync&userId=%@",MAINURL,hostId];
     [[DataManager shareInstance]ConnectServer:geturl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
         
@@ -34,43 +33,68 @@
 #pragma -mark RCIMUserInfoDataSource
 -(void)getUserInfoWithUserId:(NSString *)userId completion:(void (^)(RCUserInfo *))completion
 {
+    
+//    if([userId isEqualToString:@"__system__"])
+//    {
+//        RCUserInfo *user = [[RCUserInfo alloc]initWithUserId:userId name:@"群组通知" portrait:@""];
+//        return completion(user);
+//    }
     NSString *hostId = [DEFAULT objectForKey:@"userid"];
     if([userId isEqualToString:hostId])
     {
         NSString *hostName = [DEFAULT objectForKey:@"username"];
+        hostName = [Tool judgeNil:hostName];
         NSString *hostImg = [DEFAULT objectForKey:@"headImg"];
+        hostImg = [Tool judgeNil:hostImg];
         RCUserInfo *userInfo = [[RCUserInfo alloc]initWithUserId:userId name:hostName portrait:hostImg];
         return completion(userInfo);
         
     }
-//    if([userId isEqualToString:@"__system__"])
-//    {
-//        //客服
-//        RCUserInfo *userInfo = [[RCUserInfo alloc]initWithUserId:userId name:ZGS(@"IMSystemMsg") portrait:@"https://img.sobot.com/console/common/face/robot.png"];
-//        
-//        return completion(userInfo);
-//    }
     NSMutableArray *mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:@"friend"]];
     for (NSDictionary *dict in mutArr) {
         if([dict[@"userId"] isEqualToString:userId])
         {
+            RCUserInfo *userInfo = [[RCUserInfo alloc]init];
+            userInfo.userId = userId;
+
             NSString *showName = dict[@"nameRemark"];
             if(!showName||showName.length == 0)
             {
                 showName = dict[@"userName"];
+                showName = [Tool judgeNil:showName];
             }
-            RCUserInfo *userInfo = [[RCUserInfo alloc]initWithUserId:userId name:showName portrait:dict[@"userImg"]];
+            userInfo.name = showName;
+            NSString *imgUrl = dict[@"userImg"];
+            userInfo.portraitUri = imgUrl;
+            
+            if(imgUrl.length <= 0 || !imgUrl)
+            {
+                userInfo.portraitUri = [RCDUtilities defaultUserPortrait:userInfo];
+                userInfo.portraitUri = [Tool judgeNil:userInfo.portraitUri];
+            }
+
             return completion(userInfo);
             
         }
     }
     [self getInfoByuserId:userId result:^(NSDictionary *userInfo) {
-        NSString *showName = userInfo[@"nameRemark"];
-        if(!showName||showName.length == 0)
+        NSString *showName = userInfo[@"userName"];
+        showName = [Tool judgeNil:showName];
+//        if(!showName||showName.length == 0)
+//        {
+//            showName = userInfo[@"userName"];
+//        }
+        
+        RCUserInfo *info = [[RCUserInfo alloc]init];
+        info.name = showName;
+        info.userId = userId;
+        NSString *imgUrl = userInfo[@"userImg"];
+        info.portraitUri = imgUrl;
+        if(!imgUrl||imgUrl.length <= 0)
         {
-            showName = userInfo[@"userName"];
+            info.portraitUri = [RCDUtilities defaultUserPortrait:info];
         }
-        RCUserInfo *info = [[RCUserInfo alloc]initWithUserId:userInfo[@"userId"] name:showName portrait:userInfo[@"userImg"]];
+        info.portraitUri = [Tool judgeNil:info.portraitUri];
         return completion(info);
     }];
 
@@ -78,7 +102,6 @@
 -(void)getGroupInfoFromServer:(NSString *)groupId resultBlock:(void(^)(IMGroupModel * groupBlock))completion
 {
     //没找到的话到服务器找
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *userid = [DEFAULT objectForKey:@"userid"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?groupInfo&groupId=%@&userId=%@",MAINURL,groupId,userid];
     [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
@@ -119,6 +142,7 @@
             group.groupName = dict[@"groupName"];
             NSString *imgUrl = dict[@"groupImg"];
             group.portraitUri = imgUrl;
+            group.groupId = groupId;
             if(imgUrl.length <= 0 || !imgUrl)
             {
              group.portraitUri = [RCDUtilities defaultGroupPortrait:group];
@@ -144,9 +168,13 @@
         RCUserInfo *user = [[RCUserInfo alloc]initWithUserId:userId name:@"群组通知" portrait:nil];
       return completion(user);
     }
-    NSArray *arr = [Tool readFileFromPath:groupId];
-    NSString *name;
+    __block NSString *name;
     NSString *imgUrl;
+   // [self getUserInfoWithUserId:userId completion:^(RCUserInfo *userInfo) {
+   //     name = userInfo.name;
+        //imgUrl = userInfo.portraitUri;
+   // }];
+    NSArray *arr = [Tool readFileFromPath:groupId];
     for (NSDictionary *dict in arr) {
         if([dict[@"userId"] isEqualToString:userId])
         {
@@ -157,6 +185,11 @@
             {
                 name = remark;
             }
+            NSString *userFriRemark = dict[@"userFriRemark"];
+            if(userFriRemark.length > 0)
+            {
+                name = userFriRemark;
+            }
             RCUserInfo *userInfo = [[RCUserInfo alloc]initWithUserId:userId name:name portrait:imgUrl];
             return completion(userInfo);
         }
@@ -164,7 +197,12 @@
 
     }
    [self getInfoByuserId:userId result:^(NSDictionary *userInfo) {
-       RCUserInfo *user = [[RCUserInfo alloc]initWithUserId:userId name:userInfo[@"userName"] portrait:userInfo[@"userImg"]];
+       NSString *str = userInfo[@"nameRemark"];
+       if(str.length <= 0)
+       {
+           str = userInfo[@"userName"];
+       }
+       RCUserInfo *user = [[RCUserInfo alloc]initWithUserId:userId name:str portrait:userInfo[@"userImg"]];
        return completion(user);
    }];
     
@@ -172,14 +210,14 @@
 #pragma -mark RCIMGroupMemberDataSource
 -(void)getAllMembersOfGroup:(NSString *)groupId result:(void (^)(NSArray<NSString *> *))result
 {
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSDictionary *dict = [Tool readDictFromPath:@"time"];
     NSString *lastTime = dict[groupId];
     if(lastTime == nil)
     {
         lastTime = @"0";
     }
-    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findGroupUsers&groupId=%@&lastAccessTime=%@",MAINURL,groupId,lastTime];
+    NSString *userid = [DEFAULT objectForKey:@"userid"];
+    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findGroupUsers&groupId=%@&lastAccessTime=%@&userId=%@",MAINURL,groupId,lastTime,userid];
     [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
         if(resultBlock)
         {
@@ -206,79 +244,30 @@
 
         }
     }];
-    
-//    [manager GET:getUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//     //   NSLog(@"groupMember...%@",dict);
-//        
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        NSArray *arr = [Tool readFileFromPath:groupId];
-//        resultBlock(arr);
-//    }];
-
 }
 
 #pragma -mark 自定义方法（一下都是）
-#pragma -mark 获取群里所有成员信息
-//-(void)MygetAllMembersOfGroup:(NSString *)groupId
-//                      result:(void (^)(NSArray *userIdList))resultBlock
-//{
-//    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-//    NSDictionary *dict = [Tool readDictFromPath:@"time"];
-//    NSString *lastTime = dict[groupId];
-//    if(lastTime == nil)
-//    {
-//        lastTime = @"0";
-//    }
-//    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findGroupUsers&groupId=%@&lastAccessTime=%@",MAINURL,groupId,lastTime];
-//    [manager GET:getUrl parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//       // NSLog(@"groupMember...%@",dict);
-//        NSArray *arr = dict[@"groupUserList"];
-//        if(arr.count > 0)
-//        {
-//            //存
-//            NSDictionary *dict = @{groupId:arr};
-//            NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(groupInfoThread:) object:dict];
-//            [thread start];
-//        }
-//        else
-//        {
-//            //取
-//            arr = [Tool readFileFromPath:groupId];
-//        }
-//        resultBlock(arr);
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        NSArray *arr = [Tool readFileFromPath:groupId];
-//        resultBlock(arr);
-//    }];
-//    
-//}
 #pragma -mark 获取通讯录
 -(void)getAddressBook:(void(^)(NSDictionary *addressDict))addressBlock
 {
     NSMutableDictionary *timeDict = [NSMutableDictionary dictionaryWithDictionary:[Tool readDictFromPath:@"time"]];
-    NSString *postTime = @"0";//timeDict[@"lastAccessTime"];
+    NSString *postTime = timeDict[@"lastAccessTime"];
+    postTime = @"0";
     if(postTime == nil)
     {
         postTime = @"0";
     }
     NSString *userid = [DEFAULT objectForKey:@"userid"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findUserAllFriend&userId=%@&lastAccessTime=%@",MAINURL,userid,postTime];
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-    
     [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
         if(resultBlock)
         {
             if(resultBlock.count > 0)
             {
                 NSArray *friendArr = resultBlock[@"allFriend"];
-                if(friendArr.count > 0)
-                {
-                  //  [[RCIM sharedRCIM]clearUserInfoCache];
+               // if(friendArr.count >= 0)
+              //  {
+                 //   [[RCIM sharedRCIM]clearUserInfoCache];
                     NSNumber *lastTime = resultBlock[@"lastAccessTime"];
                     if(lastTime)
                     {
@@ -289,15 +278,15 @@
                     //写入文件(好友)
                     NSThread *thread1 =  [[NSThread alloc]initWithTarget:self selector:@selector(write:) object:friendArr];
                     [thread1 start];
-                }
+              //  }
                 //群
                 NSArray *groupArr = resultBlock[@"allGroup"];
-                if(groupArr.count > 0)
-                {
+               // if(groupArr.count > 0)
+              //  {
                   //  [[RCIM sharedRCIM]clearGroupInfoCache];
                     NSThread *groupThread = [[NSThread alloc]initWithTarget:self selector:@selector(groupThread:) object:groupArr];
                     [groupThread start];
-                }
+              //  }
             }
             addressBlock(resultBlock);
         }
@@ -390,10 +379,11 @@
 //服务器查找好友
 -(void)getInfoByuserId:(NSString *)userId result:(void(^)(NSDictionary * userInfo))userBlock
 {
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     //查找好友（根据id）
-    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findFriend&userId=%@",MAINURL,userId];
+    NSString *myUserId = [DEFAULT objectForKey:@"userid"];
+    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?findFriend&userId=%@&myUserId=%@",MAINURL,userId,myUserId];
     [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
+        DDLOG(@"%@",resultBlock);
         NSArray *arr = resultBlock[@"friends"];
         if(arr.count > 0)
         {
@@ -405,19 +395,6 @@
             
         }
     }];
-    
-    
-//    [manager GET:getUrl parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//      //  NSLog(@"dict%@",dict);
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
-//
 }
 -(IMUserModel *)getUserModelByUserId:(NSString *)userId
 {

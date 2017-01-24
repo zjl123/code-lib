@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <RongIMKit/RongIMKit.h>
 @interface IMRCChatViewController : RCConversationViewController
-
+-(void)renameGroupName:(NSNotification *)notify;
+-(void)ClearHistoryMsg:(NSNotification *)notify;
 @end

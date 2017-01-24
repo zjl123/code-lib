@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BaseViewController.h"
 #import <RongIMKit/RongIMKit.h>
-@interface ActiveViewController : BaseViewController
+@interface ActiveViewController : RCConversationListViewController 
 //-(void)response:(NSNotification *)n;
-//@property(nonatomic,retain)NSString *strUrl;
+@property(nonatomic,retain)NSString *strUrl;
 @end

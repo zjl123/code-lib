@@ -17,6 +17,7 @@
     UITableViewCell *cell;
     NSArray *cellTitle;
     NSArray *cellType;
+    UIButton *backBtn;
 }
 @end
 
@@ -30,6 +31,23 @@
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.navigationController.navigationBar.topItem.title = @"";
+    self.navigationItem.hidesBackButton = YES;
+    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    //backBtn.frame = CGRectMake(7, 4, 30, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+    //   backBtn.imageView.backgroundColor = [UIColor redColor];
+    //   backBtn.backgroundColor = [UIColor greenColor];
+    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:backBtn];
+    
+    
+    
+    
     self.tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, width1, height1-StatuesHeight-self.navigationController.navigationBar.frame.size.height) style:UITableViewStyleGrouped];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -55,6 +73,20 @@
         [self changeFunc:cellTitle andtype:cellType];
         [self.tableView reloadData];
     }
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    backBtn.hidden = NO;
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    backBtn.hidden = YES;
+}
+-(void)leftBtnclick:(UIButton *)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

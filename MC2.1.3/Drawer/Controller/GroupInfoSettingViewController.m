@@ -22,8 +22,11 @@
 #import "HudView.h"
 #import "SwitchCollectionViewCell.h"
 #import "PwdEdite.h"
+#import "TYDecorationSectionLayout.h"
+#import "ImgCollectionViewCell.h"
+#import "CerateGroupViewController.h"
 #define SwitchButtonTag  1111
-@interface GroupInfoSettingViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LogoutDelegate,SwitchDelegate,UIActionSheetDelegate,TransformValueDelegate>
+@interface GroupInfoSettingViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,LogoutDelegate,SwitchDelegate,UIActionSheetDelegate,TransformValueDelegate,ProtrailDelegate>
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (strong, nonatomic)IMUserModel *myInfo;
 @property (retain, nonatomic)NSMutableArray *addArr;
@@ -108,21 +111,35 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+   // self.title = @"cdcdcd";
     myIndex = 0;
     allInfoArr = [NSMutableArray array];
+    //更新数据
+     [self getAllMemberShip];
+    //加载数据
     [self loadData];
-    UICollectionViewFlowLayout *flouLayout = [[UICollectionViewFlowLayout alloc]init];
+    TYDecorationSectionLayout *flouLayout = [[TYDecorationSectionLayout alloc]init];
+    flouLayout.alternateDecorationViews = YES;
+    flouLayout.decorationViewOfKinds = @[@"FirstDecorationSectionView"];
+    
+    flouLayout.minimumLineSpacing = 0.0f;
+    flouLayout.minimumInteritemSpacing = 0.0f;
     flouLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    flouLayout.sectionInset = UIEdgeInsetsMake(0, 10, 0, 10);
     _collectionView.collectionViewLayout = flouLayout;
     _collectionView.pagingEnabled = NO;
+    _collectionView.showsVerticalScrollIndicator = NO;
     _collectionView.backgroundColor = RGB(237, 237, 237);
+    _collectionView.tintColor = [UIColor whiteColor];
     [_collectionView registerClass:[GroupMemberCollectionViewCell class] forCellWithReuseIdentifier:@"member"];
+    [_collectionView registerClass:[GroupMemberCollectionViewCell class] forCellWithReuseIdentifier:@"addOrDele"];
     [_collectionView registerClass:[TwoLabelCollectionViewCell class] forCellWithReuseIdentifier:@"two"];
     [_collectionView registerClass:[middleTextCollectionViewCell class] forCellWithReuseIdentifier:@"middle"];
+    [_collectionView registerClass:[ImgCollectionViewCell class] forCellWithReuseIdentifier:@"potrail"];
     UINib *nib = [UINib nibWithNibName:@"HeaderCollectionReusableView" bundle:nil];
     [_collectionView registerNib:nib forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"sheader"];
     [_collectionView registerClass:[SwitchCollectionViewCell class] forCellWithReuseIdentifier:@"switch"];
-    [self getAllMemberShip];
+    
     
     
 }
@@ -132,45 +149,6 @@
     self.groupModel = nil;
     [self startLoad];
    // [_collectionView reloadData];
-}
--(void)loadData
-{
-    NSArray *arr =  [RCDataSource getAllMembersFromLocalbyGroupId:_groupId];
-    [self.memArr addObjectsFromArray:arr];
-     self.memArr = [self moveCreaterToTheFirst:self.memArr];
-     //增加加减
-     [self DeleandAddData];
-     //其他section
-     if(self.memArr.count > 0)
-     {
-         [allInfoArr addObject:self.memArr];
-     }
-     else
-     {
-         [allInfoArr addObject:@[]];
-     }
-     NSString *userId = [DEFAULT objectForKey:@"userid"];
-     __block NSString *name = @"";
-     [RCDataSource getUserInfoWithUserId:userId inGroup:_groupId completion:^(RCUserInfo *userInfo) {
-         name = userInfo.name;
-     }];
-     sencendArr = @[@{@"title":ZGS(@"IMAliasInGroup"),@"detail":name}];
-     NSString *lastStr = ZGS(@"IMGroupLeave");
-     if(self.groupModel.role == 2)
-     {
-         lastStr = ZGS(@"IMGroupDissolve");
-         sencendArr = @[@{@"title":ZGS(@"IMGroupName"),@"detail":self.groupModel.groupName},@{@"title":ZGS(@"IMAliasInGroup"),@"detail":name}];
-     }
-     [allInfoArr addObject:sencendArr];
-     NSArray *thirdArr = @[ZGS(@"IMNotifications"),ZGS(@"IMTop"),ZGS(@"IMClearHis")];
-     [allInfoArr addObject:thirdArr];
-     NSArray *lastArr = @[lastStr];
-     [allInfoArr addObject:lastArr];
-     dispatch_async(dispatch_get_main_queue(), ^{
-          [_collectionView reloadData];
-     });
-
-    
 }
 -(void)startLoad
 {
@@ -192,12 +170,12 @@
     if(section == 0)
     {
         NSArray *arr = allInfoArr[section];
-        NSInteger num = arr.count;
-        if(num%4 != 0)
-        {
-            num =num - num%4 + 4;
-        }
-        return num;
+//        NSInteger num = arr.count;
+//        if(num%4 != 0)
+//        {
+//            num =num - num%4 + 4;
+//        }
+        return arr.count;
     }
     else
     {
@@ -213,30 +191,44 @@
 {
     if(indexPath.section == 0)
     {
-        GroupMemberCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"member" forIndexPath:indexPath];
-        if(indexPath.row < self.memArr.count)
+        NSDictionary *dict = self.memArr[indexPath.row];
+        NSString *userId = dict[@"userId"];
+        if(userId.length > 0)
         {
-            NSDictionary *dict = self.memArr[indexPath.row];
+            GroupMemberCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"member" forIndexPath:indexPath];
             cell.model = [[IMUserModel alloc]initWithDictionary:dict];
             if([cell.model.userId isEqualToString:self.myUserId])
             {
                 myIndex = (int)indexPath.row;
             }
+            return cell;
         }
         else
         {
-            cell.imgView.image = [[UIImage alloc]init];
-            cell.title.text = @"";
+            GroupMemberCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"addOrDele" forIndexPath:indexPath];
+           // NSString *imgUrl = dict[@"userImg"];
+            cell.model = [[IMUserModel alloc]initWithDictionary:dict];
+            
+            return cell;
         }
-        return cell;
     }
     else if (indexPath.section == 1)
     {
-        TwoLabelCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"two" forIndexPath:indexPath];
-        NSDictionary *dict = allInfoArr[indexPath.section][indexPath.row];
-        cell.title.text = dict[@"title"];
-        cell.detail.text = dict[@"detail"];
-        return cell;
+        if(indexPath.row < 2)
+        {
+            TwoLabelCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"two" forIndexPath:indexPath];
+            NSDictionary *dict = allInfoArr[indexPath.section][indexPath.row];
+            cell.title.text = dict[@"title"];
+            cell.detail.text = dict[@"detail"];
+            return cell;
+        }
+        else
+        {
+            ImgCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"potrail" forIndexPath:indexPath];
+            NSDictionary *dict = allInfoArr[indexPath.section][indexPath.row];
+            cell.info = dict;
+            return cell;
+        }
     }
     else if (indexPath.section == 2)
     {
@@ -278,39 +270,30 @@
 {
     if(indexPath.section == 0)
     {
-    return CGSizeMake(_collectionView.frame.size.width/4,82);
+        return CGSizeMake(70,82);
     }
-    else if (indexPath.section == 1 || indexPath.section == 2)
+    else if (indexPath.section == 1 )
     {
-        return CGSizeMake(width1, 50);
+        if(indexPath.row < 2)
+        {
+            return CGSizeMake(collectionView.frame.size.width-20, 50);
+        }
+        else
+        {
+            return CGSizeMake(collectionView.frame.size.width-20, 60);
+        }
+    }
+    else if (indexPath.section == 2)
+    {
+        return CGSizeMake(collectionView.frame.size.width-20, 50);
     }
     else
     {
-        return CGSizeMake(width1, 95);
+        CGFloat cellHeight = 95;
+        return CGSizeMake(collectionView.frame.size.width, cellHeight);
     }
 }
--(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
-{
-    if(section == 0)
-    {
-        return 0;//(width1-70*4)/4;
-    }
-    else
-    {
-        return 0;
-    }
-}
--(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
-{
-    if(section == 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return 0;
-    }
-}
+
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
 {
     return CGSizeMake(width1, 20);
@@ -411,6 +394,10 @@
                 //修改本人在群里的昵称
                 [self JumpToModifyMyNameInGroup];
             }
+            else if (indexPath.row == 2)
+            {
+                [self jumpToImg];
+            }
         }
         else
         {
@@ -462,6 +449,15 @@
     remarkVC.userid = self.groupModel.groupId;
     isMine = YES;
     [self.navigationController pushViewController:remarkVC animated:YES];
+}
+#pragma -mark 跳转修改群头像
+-(void)jumpToImg
+{
+    CerateGroupViewController *create = [[CerateGroupViewController alloc]initWithNibName:@"CerateGroupViewController" bundle:nil];
+    create.proDelegate = self;
+    create.isCreate = NO;
+    create.targetId = self.groupModel.groupId;
+    [self.navigationController pushViewController:create animated:YES];
 }
 #pragma -mark 跳转到好友详情
 -(void)jumpToFriendDetail:(IMUserModel *)model
@@ -544,7 +540,7 @@
 {
     NSString *name = [DEFAULT objectForKey:@"username"];
      NSString *parameterStr = [DEFAULT objectForKey:@"userid"];
-    NSDictionary *dict = @{@"targetUserIds":@[parameterStr],@"targetUserDisplayNames":@[name]};
+    NSDictionary *dict = @{@"targetUserIds":@[parameterStr],@"targetUserDisplayNames":@[name],@"operatorNickname":name,@"newCreatorId":@""};
     [self deleMemberFromGroup:dict opration:@"Quit" andHudView:nil];
 }
 #pragma -mark 解散群
@@ -603,48 +599,74 @@
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:nil message:meassage delegate:self cancelButtonTitle:ZGS(@"ok") otherButtonTitles:nil, nil];
     [alert show];
 }
+-(void)loadData
+{
+    NSArray *arr =  [RCDataSource getAllMembersFromLocalbyGroupId:_groupId];
+    [self.memArr addObjectsFromArray:arr];
+    self.memArr = [self moveCreaterToTheFirst:self.memArr];
+    //增加加减
+    [self DeleandAddData];
+    //其他section
+    if(self.memArr.count > 0)
+    {
+        [allInfoArr addObject:self.memArr];
+    }
+    else
+    {
+        [allInfoArr addObject:@[]];
+    }
+    NSString *userId = [DEFAULT objectForKey:@"userid"];
+    __block NSString *name = @"";
+    [RCDataSource getUserInfoWithUserId:userId inGroup:_groupId completion:^(RCUserInfo *userInfo) {
+        name = userInfo.name;
+    }];
+    sencendArr = @[@{@"title":ZGS(@"IMAliasInGroup"),@"detail":name}];
+    NSString *lastStr = ZGS(@"IMGroupLeave");
+    if(self.groupModel.role == 2)
+    {
+        
+        NSString *img = self.groupModel.portraitUri;
+        img = [Tool judgeNil:img];
+        lastStr = ZGS(@"IMGroupDissolve");
+        sencendArr = @[@{@"title":ZGS(@"IMGroupName"),@"detail":self.groupModel.groupName},@{@"title":ZGS(@"IMAliasInGroup"),@"detail":name},@{@"title":@"群头像",@"detail":img}];
+    }
+    [allInfoArr addObject:sencendArr];
+    NSArray *thirdArr = @[ZGS(@"IMNotifications"),ZGS(@"IMTop"),ZGS(@"IMClearHis")];
+    [allInfoArr addObject:thirdArr];
+    NSArray *lastArr = @[lastStr];
+    [allInfoArr addObject:lastArr];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [_collectionView reloadData];
+    });
+}
+
 #pragma -mark 更新数据
 -(void)getAllMemberShip
 {
     [RCDataSource getAllMembersOfGroup:_groupId result:^(NSArray<NSString *> *userIdList) {
+        self.memArr = nil;
+        [self.memArr addObjectsFromArray:userIdList];
+        self.memArr = [self moveCreaterToTheFirst:self.memArr];
+        //增加加减
+        [self DeleandAddData];
+        //其他section
+        if(self.memArr.count > 0)
+        {
+          //  [allInfoArr insertObject:self.memArr atIndex:0];
+            
+            [allInfoArr replaceObjectAtIndex:0 withObject:self.memArr];
+        }
+       // [_collectionView reloadData];
+        
+        
+        NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:0];
+        //解决闪屏的问题
+        [UIView performWithoutAnimation:^{
+             [_collectionView reloadSections:indexSet];
+        }];
+       
+ 
     }];
-//     [RCDataSource MygetAllMembersOfGroup:_groupId result:^(NSArray *userIdList) {
-//         _memArr = nil;
-//         _memArr = [NSMutableArray arrayWithArray:userIdList];
-//         _memArr = [self moveCreaterToTheFirst:_memArr];
-//         //增加加减
-//         [self DeleandAddData];
-//         //其他section
-//         if(_memArr.count > 0)
-//         {
-//             [allInfoArr addObject:_memArr];
-//         }
-//         else
-//         {
-//             [allInfoArr addObject:@[]];
-//         }
-//         NSString *userId = [DEFAULT objectForKey:@"userid"];
-//         __block NSString *name;
-//         [RCDataSource getUserInfoWithUserId:userId inGroup:_groupId completion:^(RCUserInfo *userInfo) {
-//             name = userInfo.name;
-//         }];
-//         sencendArr = @[@{@"title":@"我在本群的昵称",@"detail":name}];
-//         NSString *lastStr = @"删除并退出";
-//         if(_groupModel.role == 2)
-//         {
-//             lastStr = @"解散本群";
-//             sencendArr = @[@{@"title":@"群聊名称",@"detail":_groupModel.groupName},@{@"title":@"我在本群的昵称",@"detail":name}];
-//         }
-//         [allInfoArr addObject:sencendArr];
-//         NSArray *thirdArr = @[@"消息免打扰",@"会话置顶",@"清除聊天记录"];
-//         [allInfoArr addObject:thirdArr];
-//         NSArray *lastArr = @[lastStr];
-//         [allInfoArr addObject:lastArr];
-//         dispatch_async(dispatch_get_main_queue(), ^{
-//              [_collectionView reloadData];
-//         });
-//        
-//     }];
 }
 -(void)DeleandAddData
 {
@@ -710,25 +732,20 @@
 #pragma -mark 加入群成员
 -(void)addMemberInGroup:(NSDictionary *)usersDict andHudView:(HudView *)hud
 {
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *hostId = [DEFAULT objectForKey:@"userid"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?joinGroup&groupId=%@&groupName=%@&sourceUserId=%@&opration=Add",MAINURL,self.groupModel.groupId,self.groupModel.groupName,hostId];
     getUrl = [getUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   // NSLog(@"%@",usersDict);
     NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:usersDict];
     [mutDict setObject:usersDict forKey:@"data"];
-  //  NSLog(@"..cdcd%@",mutDict);
-    
     [[DataManager shareInstance]ConnectServer:getUrl parameters:mutDict isPost:YES result:^(NSDictionary *resultBlock) {
         if([resultBlock[@"code"] integerValue] == 200)
         {
             [hud stopShow];
             [self refreshData:usersDict isAdd:YES];
-            NSLog(@",,,,%@",resultBlock);
             NSString *time = resultBlock[@"lastAccessTime"];
             if(time)
             {
-                NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(writeTime:) object:@""];
+                NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(writeTime:) object:time];
                 [thread start];
             }
         }
@@ -738,14 +755,6 @@
         }
  
     }];
-//    NSDictionary *parameter = [PwdEdite ecoding:mutDict];
-//    [manager POST:getUrl parameters:parameter progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//        
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
 }
 #pragma -mark 删除群成员（退出群）
 -(void)deleMemberFromGroup:(NSDictionary *)usersDict opration:(NSString *)opration andHudView:(HudView *)hud
@@ -779,16 +788,6 @@
         }
  
     }];
-    
-    
-//    NSDictionary *parameter = [PwdEdite ecoding:mutDict];
-//    [manager POST:getUrl parameters:parameter progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        dict = [PwdEdite decoding:dict];
-//       
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        
-//    }];
 }
 -(void)refreshData:(NSDictionary *)info isAdd:(BOOL)add
 {
@@ -814,24 +813,45 @@
         }
         else
         {
-            NSArray *friendArr = [Tool readFileFromPath:@"friend"];
+           // NSArray *friendArr = [Tool readFileFromPath:@"friend"];
             NSArray *idArr = info[@"targetUserIds"];
             for (NSString *userId in idArr) {
-                for (NSDictionary *dict in friendArr) {
-                  //  NSString *str = dict[@"userId"];
-                    if([userId isEqualToString:dict[@"userId"]])
-                    {
-                        NSString *userImg = dict[@"userImg"];
-                        if(!userImg||userImg.length <= 0)
-                        {
-                            userImg = @"";
-                        }
-                        NSDictionary *newDict = @{@"userName":dict[@"userName"],@"userId":dict[@"userId"],@"userImg":userImg,@"role":@"1"};
-                        [self.addArr addObject:newDict];
-                        [self.memArr insertObject:newDict atIndex:self.memArr.count-3];
-                        break;
-                    }
-                }
+                [[RCIMDataSource shareInstance]getUserInfoWithUserId:userId completion:^(RCUserInfo *userInfo) {
+                    NSString *name = userInfo.name;
+                    NSString *userImg = userInfo.portraitUri;
+                    NSDictionary *newDict = @{@"userName":name,@"userId":userId,@"userImg":userImg,@"role":@"1"};
+                    [self.addArr addObject:newDict];
+                    [self.memArr insertObject:newDict atIndex:self.memArr.count-2];
+                    
+                }];
+                
+                
+                
+                
+                
+//                for (NSDictionary *dict in friendArr) {
+//                  //  NSString *str = dict[@"userId"];
+//                    if([userId isEqualToString:dict[@"userId"]])
+//                    {
+//                        NSString *userImg = dict[@"userImg"];
+//                        
+//                        if(!userImg||userImg.length <= 0)
+//                        {
+//                            userImg = @"";
+//                        }
+//                        NSString *name = dict[@"nameRemark"];
+//                        if(name.length <= 0)
+//                        {
+//                            name = dict[@"userName"];
+//                            name = [Tool judgeNil:name];
+//                        }
+//                        NSDictionary *newDict = @{@"userName":name,@"userId":dict[@"userId"],@"userImg":userImg,@"role":@"1"};
+//                        [self.addArr addObject:newDict];
+//                        [self.memArr insertObject:newDict atIndex:self.memArr.count-2];
+//                       // [self.memArr addObject:newDict];
+//                        break;
+//                    }
+//                }
             }
             NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(addThread:) object:self.addArr];
             [thread start];
@@ -848,7 +868,8 @@
 -(void)addThread:(NSMutableArray *)aArr
 {
     NSMutableArray *mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:_groupId]];
-    for (NSDictionary *dict1 in aArr) {
+    NSArray *arr = [NSArray arrayWithArray:aArr];
+    for (NSDictionary *dict1 in arr) {
         for (NSDictionary *dict2 in mutArr) {
             if([dict1[@"userId"] isEqualToString:dict2[@"userId"]])
             {
@@ -925,6 +946,33 @@
     }
     NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:1];
     [_collectionView reloadSections:indexSet];
+}
+#pragma -mark ProtrailDelegate
+-(void)transProtrailUrl:(NSString *)protrailUrl
+{
+    NSThread *imgSave = [[NSThread alloc]initWithTarget:self selector:@selector(imgSave:) object:protrailUrl];
+    [imgSave start];
+//    sencendArr = @[@{@"title":ZGS(@"IMGroupName"),@"detail":self.groupModel.groupName},@{@"title":ZGS(@"IMAliasInGroup"),@"detail":name},@{@"title":@"群头像",@"detail":img}];
+    NSMutableArray *mutArr = [NSMutableArray arrayWithArray:sencendArr];
+    NSDictionary *dict = @{@"title":@"群头像",@"detail":protrailUrl};
+    [mutArr replaceObjectAtIndex:2 withObject:dict];
+    [allInfoArr replaceObjectAtIndex:1 withObject:mutArr];
+ //   NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:1];
+  //  [_collectionView reloadSections:indexSet];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:2 inSection:1];
+    [_collectionView reloadItemsAtIndexPaths:@[indexPath]];
+}
+-(void)imgSave:(NSString *)protrailUrl
+{
+    if(protrailUrl.length > 0 &&self.groupModel.groupId.length > 0)
+    {
+        NSString *name = self.groupModel.groupName;
+        name = [Tool judgeNil:name];
+        NSString *role = [NSString stringWithFormat:@"%ld",(long)self.groupModel.role];
+        role = [Tool judgeNil:role];
+        NSDictionary *dict = @{@"groupId":self.groupModel.groupId,@"groupImg":protrailUrl,@"groupName":name,@"role":role};
+        [[RCIMDataSource shareInstance]saveGroupInfo:dict];
+    }
 }
 #pragma -mark LogoutDelegate
 -(void)LogoutGroup

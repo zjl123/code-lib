@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "WebViewController.h"
-@interface WebViewViewController : WebViewController
+@interface WebViewViewController : UIViewController
 @property(nonatomic,retain)NSNumber *cellId;
 @property(nonatomic,retain)NSString *herfStr;
 @property(nonatomic,assign)int tag;

@@ -37,6 +37,8 @@
     UIButton *sendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [sendBtn setTitle:ZGS(@"send") forState:UIControlStateNormal];
     [sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [sendBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
+    [sendBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
     [sendBtn addTarget:self action:@selector(sendClick:) forControlEvents:UIControlEventTouchUpInside];
     CGSize sendSize = [ZGS(@"send") getStringSize:[UIFont systemFontOfSize:17] width:100];
     sendBtn.frame = CGRectMake(0, 0, sendSize.width+10,30);
@@ -52,11 +54,8 @@
 #pragma -mark 添加好友
 -(void)sendClick:(UIButton *)sender
 {
- //   NSLog(@"senddd");
+    sender.userInteractionEnabled = NO;
     NSString *sourceID = [DEFAULT objectForKey:@"userid"];
-   // NSString *userName = [DEFAULT objectForKey:@"username"];
-    //发送
-   // AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?addFriend&sourceUserId=%@&targetUserId=%@&targetUserName=%@&message=%@&opration=add",MAINURL,sourceID,_userID,_name,self.verifyInfo.text];
     
     getUrl = [getUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -72,6 +71,7 @@
         else
         {
             UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"发送失败" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+            sender.userInteractionEnabled = YES;
             [alertView show];
             NSLog(@"发送失败");
         }

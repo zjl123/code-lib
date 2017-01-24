@@ -22,23 +22,14 @@
 @implementation LinkmanTableViewController
 {
   //  NSArray *linkmanArr;
-    NSMutableArray *addPhoneNum;
-    NSMutableArray *addName;
-    BOOL isEditing;
     GreyView *greyView;
     ActivityView *actView;
     dispatch_queue_t _queue;
     dispatch_queue_t _main;
+    UIButton *backBtn;
+    NSMutableArray *addPhoneNum;
+    NSMutableArray *addName;
 }
-//-(NSArray *)firstArr
-//{
-//    if(!_firstArr)
-//    {
-//        _firstArr = [NSArray array];
-//        //self.firstArr = _firstArr;
-//    }
-//    return _firstArr;
-//}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -46,8 +37,18 @@
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    UIBarButtonItem *leftBtn = [[UIBarButtonItem alloc]initWithImage:[[UIImage imageNamed:@"back"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] style:UIBarButtonItemStylePlain target:self action:@selector(leftBtnclick:)];
-    self.navigationItem.leftBarButtonItem = leftBtn;
+    [self.navigationItem setHidesBackButton:YES];
+    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    
+    backBtn.frame = CGRectMake(7, 4, 35, 36);
+    //backBtn.frame = CGRectMake(7, 4, 30, 36);
+    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
+    //   backBtn.imageView.backgroundColor = [UIColor redColor];
+    //   backBtn.backgroundColor = [UIColor greenColor];
+    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:backBtn];
     ImgButton *rightBtn = [ImgButton buttonWithType:UIButtonTypeCustom];
     rightBtn.frame = CGRectMake(0, 0, 40, 30);
     [rightBtn setTitle:ZGS(@"edit") forState:UIControlStateNormal];
@@ -68,6 +69,11 @@
     [self getPhoneBooks];
 
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    backBtn.hidden = YES;
+}
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -83,24 +89,34 @@
     _queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     _main = dispatch_get_main_queue();
     dispatch_async(_queue, ^{
-        self.firstArr = [Tool getAddressBook];
-        NSDictionary *resultDict = [Tool sort:self.firstArr sortKey:@"userName"];
-        [self activityStopShow];
-        _linkArr = resultDict[@"sec"];
-        _tagArr = resultDict[@"tag"];
-        dispatch_async(_main, ^{
-            if(self.firstArr.count > 0)
+        
+        [[Tool shareInstance]getAddressBook:^(NSArray *addressArray) {
+            if(addressArray&&addressArray.count > 0)
             {
-                [self.tableView reloadData];
+                self.firstArr = addressArray;
+                NSDictionary *resultDict = [Tool sort:self.firstArr sortKey:@"userName"];
+                [self activityStopShow];
+                _linkArr = resultDict[@"sec"];
+                _tagArr = resultDict[@"tag"];
+                dispatch_async(_main, ^{
+                    if(self.firstArr.count > 0)
+                    {
+                        [self.tableView reloadData];
+                        [self postFromMobileContact];
+                    }
+                });
             }
             else
             {
                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"getFailed") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
                 [alertView show];
+                
             }
-        });
+        }];
+        
          });
 }
+-(void)postFromMobileContact{}
 -(void)activity
 {
     greyView = [[GreyView alloc]init];
@@ -129,7 +145,7 @@
 
 
 
--(void)leftBtnclick:(UIBarButtonItem *)item
+-(void)leftBtnclick:(UIButton *)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 }
@@ -152,7 +168,6 @@
        {
         int type = [_paramsArr[3] intValue];
         NSString *content = _paramsArr[5];
-      //  content = [content stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         if(type == 0)
         {
             //调用发短信见面
@@ -173,6 +188,10 @@
        }
 
         
+    }
+    else
+    {
+        [self.tableView reloadData];
     }
 }
 -(void)jump:(NSArray *)phoneArr NameArr:(NSArray *)nameArr Url:(NSString *)url andContent:(NSString *)content
@@ -216,11 +235,6 @@
 //表格右侧添加A-Z的索引
 -(NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-//    NSMutableArray *mutArr = [NSMutableArray array];
-//     [mutArr addObject:@"#"];
-//    for (int i = 'A'; i <='Z'; i++) {
-//        [mutArr addObject:[NSString stringWithFormat:@"%c",i]];
-//    }
     return _tagArr;
 }
 //索引于cell关联

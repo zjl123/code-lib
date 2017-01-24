@@ -12,12 +12,12 @@
 #import "ShareView.h"
 #import "ImgButton.h"
 #import "NSString+Exten.h"
-@interface WebViewController () <UIWebViewDelegate>
+@interface WebViewController () 
 {
     
    // GreyView *view;
   //  ActivityView *activity;
-    UIButton *backBtn;
+  //  UIButton *backBtn;
     UIButton *closeBtn;
     UIButton *shareBtn;
    // UILabel *label;
@@ -32,18 +32,23 @@
     // Do any additional setup after loading the view.
     [self.navigationItem setHidesBackButton:YES];
     self.navigationController.navigationBar.topItem.title = @"";
+    UIBarButtonItem *item = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"back"] style:UIBarButtonItemStylePlain target:nil action:nil];
+    self.navigationItem.backBarButtonItem = item;
+    
+    
+    
     
 
     web = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, width1, height1-self.navigationController.navigationBar.frame.size.height-StatuesHeight)];
     web.delegate = self;
-    backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
-    backBtn.frame = CGRectMake(7, 4, 30, 36);
-    backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+    _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+    _backBtn.frame = CGRectMake(7, 4, 35, 36);
+    _backBtn.imageEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 5);
    // backBtn.imageView.backgroundColor = [UIColor yellowColor];
-    backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
- //   backBtn.backgroundColor = [UIColor greenColor];
-    [backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    _backBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    //backBtn.backgroundColor = [UIColor greenColor];
+    [_backBtn addTarget:self action:@selector(leftBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [web.scrollView setShowsVerticalScrollIndicator:NO];
     [self.view addSubview:web];
     closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -56,7 +61,7 @@
    // closeBtn.titleLabel.font = [UIFont systemFontOfSize:17];
     [closeBtn addTarget:self action:@selector(leftCloseBtnclick:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:closeBtn];
-    [self.navigationController.navigationBar addSubview:backBtn];
+    [self.navigationController.navigationBar addSubview:_backBtn];
     CGFloat labelx = CGRectGetMaxX(closeBtn.frame);
     
    //SearchView
@@ -75,14 +80,14 @@
 {
     [super viewWillDisappear:animated];
     closeBtn.hidden = YES;
-    backBtn.hidden = YES;
+    _backBtn.hidden = YES;
     _label.hidden = YES;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     closeBtn.hidden = YES;
-    backBtn.hidden = NO;
+    _backBtn.hidden = NO;
     _label.hidden = NO;
 }
 -(void)leftBtnclick:(UIButton *)item
@@ -134,24 +139,23 @@
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
-
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
     [self activituStartShow];
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
-  //  if(view !=nil)
-  ///  {
-        [_activity removeFromSuperview];
-        [_greyView removeFromSuperview];
-        _greyView = nil;
- //   }
+    //  if(view !=nil)
+    ///  {
+    [_activity removeFromSuperview];
+    [_greyView removeFromSuperview];
+    _greyView = nil;
+    //   }
     _label.text = [web pageTitle];
     
     _label.lineBreakMode = NSLineBreakByTruncatingTail;
     _label.textAlignment = NSTextAlignmentCenter;
-
+    
     
 }
 -(void)activityStopShow

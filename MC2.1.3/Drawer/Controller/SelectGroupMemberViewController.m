@@ -79,6 +79,7 @@
     else
     {
         CerateGroupViewController *createGroup = [[CerateGroupViewController alloc]initWithNibName:@"CerateGroupViewController" bundle:nil];
+        createGroup.isCreate = YES;
         createGroup.useridArr = _useridArr;
         [self.navigationController pushViewController:createGroup animated:YES];
     }
@@ -288,7 +289,8 @@
     {
         IMFriendTableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         [_useridArr removeObject:cell.model.userId];
-        [_userNameArr removeObject:cell.model.name];
+        //为了取到备注名
+        [_userNameArr removeObject:cell.name.text];
         if(_groupModel.groupId.length > 0)
         {
             if(_useridArr.count == 0&&_isDele)

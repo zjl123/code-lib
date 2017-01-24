@@ -27,6 +27,8 @@
 #import "ShareView.h"
 #import "SearchView.h"
 #import "LinkmanTableViewController.h"
+#import "JPUSHService.h"
+#import "Server.h"
 @interface MyNavViewController () <UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UIGestureRecognizerDelegate>
 {
   //  UITableView *tbView;
@@ -41,7 +43,6 @@
 @end
 
 @implementation MyNavViewController
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -50,13 +51,13 @@
     [self.navigationBar setBarTintColor:BLUECOLOR];
     //导航栏上的字的颜色
       [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
+    //self.navigationBar.topItem.title = @"";
     
     self.interactivePopGestureRecognizer.delegate = self;
     
-    
     [self.navigationBar setTintColor:[UIColor whiteColor]];
-    self.navigationBar.backIndicatorImage = [UIImage imageNamed:@"back"];
-    self.navigationBar.backIndicatorTransitionMaskImage = [UIImage imageNamed:@"back"];
+    self.navigationBar.backIndicatorImage = [UIImage imageNamed:@"back1"];
+    self.navigationBar.backIndicatorTransitionMaskImage = [UIImage imageNamed:@"back1"];
     self.navigationBar.topItem.title = @"";
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -69,6 +70,11 @@
     [super viewWillDisappear:animated];
     bgView.hidden = YES;
 }
+
+//-(void)handleNavigationTransition:(UIPanGestureRecognizer *)pan
+//{
+//    [self popViewControllerAnimated:YES];
+//}
 //nav上的加号。
 -(void)setUpAdd
 {
@@ -156,7 +162,9 @@
 #pragma -mark rightBtnClick:
 -(void)rightBtnClick:(UIButton *)btn
 {
-    
+    [[UIApplication sharedApplication]setApplicationIconBadgeNumber:0];
+    [JPUSHService setBadge:0];
+  
 #if KGOLD
     [self setUpTbView:btn];
 #elif KMIN
@@ -176,6 +184,10 @@
         {
             NSString *str = @"isLogin";
             NSDictionary *dict = @{@"login":@"login",@"msg":@[]};
+           // NSInteger oldNum = [[userDefault objectForKey:@"msgcount"] integerValue];
+            [userDefault setObject:@"0" forKey:@"msgcount"];
+           // NSInteger aNum = [[UIApplication sharedApplication]applicationIconBadgeNumber];
+            
             [[NSNotificationCenter defaultCenter]postNotificationName:str object:dict];
             NSUserDefaults *userDefault = [NSUserDefaults new];
             [userDefault setObject:nil forKey:@"messasge"];
@@ -231,6 +243,7 @@
 -(void)tapBg:(UITapGestureRecognizer *)tapGesture
 {
     tapGesture.view.hidden = YES;
+  //  bgView.hidden = YES;
     CATransition *animation = [CATransition animation];
     animation.duration = 0.2f;
     animation.timingFunction = UIViewAnimationCurveEaseInOut;
@@ -239,10 +252,10 @@
     [_tbView.layer addAnimation:animation forKey:@"animation"];
     _tbView.hidden = YES;
 }
--(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+/*
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    //截获手势（解决手势冲突问题）
-    if([touch.view.superview isKindOfClass:[UITableViewCell class]])
+    if(self.childViewControllers.count == 1)
     {
         return NO;
     }
@@ -250,7 +263,26 @@
     {
         return YES;
     }
-    
+}
+ */
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    if(self.viewControllers.count > 1)
+    {
+        return YES;
+    }
+    else
+    {
+        //截获手势（解决手势冲突问题）
+        if([touch.view.superview isKindOfClass:[UITableViewCell class]])
+        {
+            return NO;
+        }
+        else
+        {
+            return YES;
+        }
+    }
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -394,7 +426,10 @@
     {
     if (alertView.tag == 501 ) {
         
-        [self loginout];
+        //[self loginout];
+        
+        [[Server shareInstance] loginout:self];
+        
     }
     else
     {
@@ -437,69 +472,7 @@
     a--;
 
 }
-#pragma loginout
--(void)loginout
-{
-    
-    NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
-    NSDictionary *paramers = [[NSDictionary alloc]initWithObjectsAndKeys:@"logout",@"cmd",nil];
-    
-    [[DataManager shareInstance]ConnectServer:STRURL parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
-        if(resultBlock)
-        {
-            if([resultBlock count] > 0 && [[resultBlock objectForKey:@"ret"] intValue] == 0)
-            {
-                [[RCIM sharedRCIM] disconnect:YES];
-                UIAlertView *av=[[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"logoutSuc") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-                [av show];
-                av.delegate = self;
-                av.tag = 500;
-                NSString *str = @"0";
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"cart" object:str];
-                [userDefault setInteger:3 forKey:@"autoLogin"];
-                [userDefault setInteger:0 forKey:@"login"];
-                [userDefault removeObjectForKey:@"entryptPwd"];
-                [userDefault removeObjectForKey:@"username"];
-                [userDefault removeObjectForKey:@"usercat"];
-                [userDefault removeObjectForKey:@"tk"];
-                [userDefault removeObjectForKey:@"IMToken"];
-                NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:@"login",@"login",@[],@"msg", nil];
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:dict];
-                [[UIApplication sharedApplication]setApplicationIconBadgeNumber:0];
-                
-            }
-            else
-            {
-                UIAlertView *av=[[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"logoutAgain") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-                av.tag = 505;
-                [av show];
-            }
-        }
-        else
-        {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"exception") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-            [alert show];
-        }
 
-    }];
-    
-//    NSDictionary *params = [PwdEdite ecoding:dict];
-//    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
-//    [manager POST:STRURL parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
-//        
-//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-//        if(dict != nil)
-//        {
-//            NSDictionary *result = [PwdEdite decoding:dict];
-//                    }
-//
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:ZGS(@"alert") message:ZGS(@"exception") delegate:self cancelButtonTitle:nil otherButtonTitles:ZGS(@"ok"), nil];
-//        [alert show];
-// 
-//    }];
-}
 -(void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
     if(self.viewControllers.count > 0)

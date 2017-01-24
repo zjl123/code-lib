@@ -43,6 +43,7 @@
 "pwderror" = "The password is incorrect";
 "errorTip" = "Both passwords must be identical!";
 "sendSuc" = "Send Successful";
+"sendFailed" = "Send Failure";
 "locationtTip" = "The positioning system need to be open, go to the settings,privacy, open location based service";
 "tipMessage" = "Notice";
 "messageFunc" = "The device does not support SMS functionality";
@@ -61,7 +62,7 @@
 "usableAsset" = "Balance:";
 "totalProfile" = "Total:";
 "lastProfile" = "Yesterday:";
-"currentV" = "Ver:2.1.3（Build2k161129）";
+"currentV" = "Ver:2.1.7（Build2k170120）";
 "rightN" = "Try now";
 "KYQ" = "Mining Circle";
 "cartLog" = "Available to view after login^_^";
@@ -152,3 +153,5 @@
 "IMAdded" = "Added";
 "IMFailed" = "Agree failed";
 "IMMobile" = "Mobile address book";
+"Create" = "Create";
+"Modify" = "Modify";

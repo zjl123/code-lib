@@ -11,6 +11,7 @@
 #import "FriendVerifyViewController.h"
 #import "UIImageView+WebCache.h"
 #import "IMRCChatViewController.h"
+#import "RCIMDataSource.h"
 @interface IMAddFirendViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *conversationBtn;
 - (IBAction)Conversation:(id)sender;
@@ -24,6 +25,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    self.headPoratial.clipsToBounds = YES;
+    self.headPoratial.layer.cornerRadius = 3.0f;
     [self.conversationBtn setTitle:ZGS(@"IMMessage") forState:UIControlStateNormal];
     [self.AddFriendBtn setTitle:ZGS(@"IMAdd") forState:UIControlStateNormal];
     self.conversationBtn.layer.cornerRadius = 3;
@@ -37,7 +41,17 @@
     }
     
 }
-
+-(void)setUserID:(NSString *)userID
+{
+    _userID = userID;
+    [[RCIMDataSource shareInstance]getUserInfoWithUserId:userID completion:^(RCUserInfo *userInfo) {
+       
+        self.name.text = userInfo.name;
+        NSURL *url = [NSURL URLWithString:userInfo.portraitUri];
+        [self.headPoratial sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"contact"]];
+        
+    }];
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

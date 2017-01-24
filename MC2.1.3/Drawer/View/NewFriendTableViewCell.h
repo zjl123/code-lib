@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btn;
 @property (strong, nonatomic)IMUserModel *model;
 @property (retain, nonatomic) NSString *statues;
+//@property (retain, nonatomic) NSString *userId;
 @property (weak ,nonatomic) id <IMAddFriendsDelegate> addFriendDelegate;
 - (IBAction)btnClick:(UIButton *)sender;
 

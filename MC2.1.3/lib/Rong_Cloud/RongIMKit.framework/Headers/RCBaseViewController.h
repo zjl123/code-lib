@@ -10,7 +10,6 @@
 #define __RCBaseViewController
 #import <UIKit/UIKit.h>
 #import <RongIMLib/RongIMLib.h>
-
 /*!
  IMKit ViewController基类
  

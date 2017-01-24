@@ -10,7 +10,6 @@
 #import "NewFriendTableViewCell.h"
 #import "UIImageView+WebCache.h"
 #import "DataManager.h"
-#import "MNDataBaseManager.h"
 #import <RongIMKit/RongIMKit.h>
 #import "Tool.h"
 #import "IMRCChatViewController.h"
@@ -45,6 +44,7 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.addFriendDelegate = self;
     NSDictionary *dict = _dataArr[indexPath.row];
+    //只能用model,不能用status
     cell.model = [[IMUserModel alloc]initWithDictionary:dict];
     return cell;
     
@@ -68,7 +68,7 @@
 {
     sender.userInteractionEnabled = NO;
     //接受好友请求
-    AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
+  //  AFHTTPSessionManager *manager = [DataManager shareHTTPRequestOperationManager];
     NSString *targetID = [DEFAULT objectForKey:@"userid"];
     NSString *hostName = [DEFAULT objectForKey:@"username"];
     NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?isAddFriend&isAddFir=agree&sourceUserId=%@&targetUserId=%@&targetUserName=%@&opration=accept",MAINURL,targetID,model.userId,hostName];

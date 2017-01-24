@@ -7,7 +7,7 @@
 //
 
 #import "ShowTextViewController.h"
-
+#import "SearchView.h"
 @interface ShowTextViewController ()
 
 @end
@@ -17,7 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    _textLabel.text = _msg;
+    self.navigationController.navigationBar.topItem.title = @"";
+    SearchView *searchView = [self.navigationController.navigationBar viewWithTag:711];
+    searchView.hidden = YES;
+    _titleLabel.text = _msg;
 }
 
 - (void)didReceiveMemoryWarning {

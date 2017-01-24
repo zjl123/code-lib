@@ -37,7 +37,11 @@
     [self.activity stopAnimating];
     [self removeFromSuperview];
 }
-
+-(void)startShow
+{
+    
+    [self.activity startAnimating];
+}
 
 /*
 // Only override drawRect: if you perform custom drawing.

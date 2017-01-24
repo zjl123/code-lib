@@ -25,6 +25,7 @@
         self.status = dict[@"status"];
         self.message = dict[@"message"];
         self.remarksName = dict[@"nameRemark"];
+        self.userFriRemark = dict[@"userFriRemark"];
         if([self.remarksName isMemberOfClass:[NSNull class]])
         {
             self.remarksName = @"";

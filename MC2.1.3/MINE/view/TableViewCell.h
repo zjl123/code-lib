@@ -15,4 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *detail;
 @property (weak, nonatomic) IBOutlet UIView *redPoint;
 @property (weak, nonatomic) IBOutlet UILabel *time;
+@property (retain, nonatomic) NSString *type;
+@property (retain, nonatomic) NSString *herfUrl;
 @end

@@ -14,12 +14,14 @@
 @interface CerateGroupViewController ()<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *nameField;
 @property (weak, nonatomic) IBOutlet UIImageView *imgView;
+@property (weak, nonatomic) IBOutlet UIView *blueLine;
 
 @end
 
 @implementation CerateGroupViewController
 {
     UIButton *rigntBtn;
+    HudView *hud;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,7 +29,20 @@
     self.nameField.delegate = self;
      rigntBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     rigntBtn.frame = CGRectMake(0, 0, 50, 30);
-    [rigntBtn setTitle:@"创建" forState:UIControlStateNormal];
+     self.isPost = NO;
+    if(_isCreate)
+    {
+       
+       [rigntBtn setTitle:ZGS(@"Create") forState:UIControlStateNormal];
+    }
+    else
+    {
+     //   self.isPost = YES;
+       // [rigntBtn setTitle:ZGS(@"Modify") forState:UIControlStateNormal];
+        rigntBtn.hidden = YES;
+        self.nameField.hidden = YES;
+        self.blueLine.hidden = YES;
+    }
     [rigntBtn addTarget:self action:@selector(doneClick:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rigntBtn];
 
@@ -37,7 +52,7 @@
     _nameField.attributedPlaceholder = mutStr;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
     [_imgView addGestureRecognizer:tap];
-    self.isPost = NO;
+    
     
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -48,6 +63,18 @@
         _imgView.image = self.img;
     }
 }
+//-(void)setPicLine:(NSString *)picLine
+//{
+//  //  self.picLine = picLine;
+//    }
+-(void)setModifyLine:(NSString *)modifyLine
+{
+    if(!_isCreate)
+    {
+        [self sendGroupPic:modifyLine andGroupId:self.targetId];
+    }
+
+}
 -(void)tap:(UIGestureRecognizer *)tap
 {
     [self selectedImage];
@@ -56,6 +83,7 @@
 {
     [_nameField resignFirstResponder];
     
+    //创建群
     NSString *nameStr = [self.nameField.text copy];
     nameStr = [nameStr
                stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -84,7 +112,11 @@
 {
     NSString *hostId = [DEFAULT objectForKey:@"userid"];
     NSString *hostName = [DEFAULT objectForKey:@"username"];
-    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?createGroup&hostId=%@&opration=Create&groupImg=%@",MAINURL,hostId,@""];
+    if(!self.picLine ||self.picLine.length <= 0)
+    {
+        self.picLine = @"";
+    }
+    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?createGroup&hostId=%@&opration=Create&groupImg=%@",MAINURL,hostId,self.picLine];
     getUrl = [getUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *dict = @{@"operatorNickname":hostName,@"targetGroupName":str};
     NSMutableDictionary *mutDict = [NSMutableDictionary dictionaryWithDictionary:dict];
@@ -98,19 +130,13 @@
             NSInteger code = [result[@"code"] integerValue];
             if(code == 200)
             {
-                //上传图片
-                if(self.picLine.length > 0)
-                {
-                    NSString *groupId = dict[@"GroupId"];
-                    RCGroup *group = [[RCGroup alloc]init];
-                    group.groupName = str;
-                    group.groupId = groupId;
-                    group.portraitUri = self.picLine
-                    ;
-                    [[RCIM sharedRCIM]refreshGroupInfoCache:group withGroupId:groupId];
-                    [self sendGroupPic:self.picLine andGroupId:groupId];
-                }
-                
+                NSString *groupId = dict[@"GroupId"];
+                RCGroup *group = [[RCGroup alloc]init];
+                group.groupName = str;
+                group.groupId = groupId;
+                group.portraitUri = self.picLine
+                ;
+                [[RCIM sharedRCIM]refreshGroupInfoCache:group withGroupId:groupId];
                 //取消键盘
                 [self.nameField resignFirstResponder];
                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"创建成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
@@ -154,6 +180,25 @@
                                           otherButtonTitles:nil];
     [alert show];
 }
+-(void)sendGroupPic:(NSString *)line andGroupId:(NSString *)groupId
+{
+    [self loadHudView];
+    NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?savePic&imgUrl=%@&targetId=%@",MAINURL,line,groupId];
+    [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
+        NSInteger code = [resultBlock[@"code"] integerValue];
+        if(code == 200)
+        {
+            [hud stopShow];
+          RCGroup *group =   [[RCIM sharedRCIM]getGroupInfoCache:self.targetId];
+            group.portraitUri = line;
+            //刷新
+            [[RCIM sharedRCIM] refreshGroupInfoCache:group withGroupId:groupId];
+            [self.proDelegate transProtrailUrl:line];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

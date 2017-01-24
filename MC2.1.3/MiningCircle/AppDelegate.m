@@ -28,6 +28,10 @@
 #import <RongIMKit/RongIMKit.h>
 #import "RCIMDataSource.h"
 #import "IMRCChatViewController.h"
+#import "PushWebViewController.h"
+#import <UserNotifications/UserNotifications.h>
+#import "WebViewViewController.h"
+#import "Server.h"
 //iOS10注册APNs所需头文件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>
@@ -38,6 +42,7 @@
     UIPageControl *pControl;
     UIScrollView *sView;
     NSString *time;
+    UINavigationController *nav;
 }
 @property(nonatomic,strong)UIView *lunchView;
 @end
@@ -60,14 +65,13 @@
     [[UIApplication sharedApplication]setStatusBarHidden:NO];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     _myTabBar=[[MyTabBarViewController alloc]init];
-    UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:_myTabBar];
+    nav = [[UINavigationController alloc]initWithRootViewController:_myTabBar];
     [nav.navigationBar setBarTintColor:BLUECOLOR];
     [nav.navigationBar setTintColor:[UIColor whiteColor]];
     [nav.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
-    
-    _myTabBar.navigationController.navigationBarHidden = YES;
+    nav.navigationBarHidden = YES;
+   // _myTabBar.navigationController.navigationBarHidden = YES;
     [[NSNotificationCenter defaultCenter] addObserver:_myTabBar selector:@selector(response2:) name:@"tabbarmenu" object:nil];
-   // [[NSNotificationCenter defaultCenter] addObserver:_myTabBar selector:@selector(response3:) name:@"cart" object:nil];
     self.window.rootViewController = nav;
     NSUserDefaults *userDefault = [NSUserDefaults standardUserDefaults];
     NSUserDefaults *lauchInfo = [NSUserDefaults new];
@@ -126,13 +130,23 @@
             imgView.image = [UIImage imageNamed:[arr objectAtIndex:i]];
             [sView addSubview:imgView];
         }
-        
+        [self registerRongyun:application];
         //存储启动信息
         [lauchInfo setObject:@"YES" forKey:@"FirstLaunch1"];
     }
-    //推送
-    // Override point for customization after application launch.
-   // NSString *advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    else
+    {
+        //推送
+        [self registerRongyun:application];
+        [self registerJpush:launchOptions];
+
+    }
+       //打印异常
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+    return YES;
+}
+-(void)registerJpush:(NSDictionary*)launchOptions
+{
     if([[UIDevice currentDevice].systemVersion floatValue] >=10.0)
     {JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
         entity.types = UNAuthorizationOptionAlert|UNAuthorizationOptionBadge|UNAuthorizationOptionSound;
@@ -164,17 +178,39 @@
         self.isLaunchedByNotification = YES;
     }
     
-    
-    //打印异常
-  //  NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
-    return YES;
+
 }
-//#pragma -mark 打印异常（非常好的方法）
-//void uncaughtExceptionHandler(NSException *exception) {
-//    NSLog(@"CRASH: %@", exception);
-//    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
-//    // Internal error reporting
-//}
+-(void)registerRongyun:(UIApplication *)application
+{
+    /**
+     * 推送处理1（rongyun）
+     */
+    if ([application
+         respondsToSelector:@selector(registerUserNotificationSettings:)]) {
+        //注册推送, 用于iOS8以及iOS8之后的系统
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings
+                                                settingsForTypes:(UIUserNotificationTypeBadge |
+                                                                  UIUserNotificationTypeSound |
+                                                                  UIUserNotificationTypeAlert)
+                                                categories:nil];
+        [application registerUserNotificationSettings:settings];
+    } else {
+        //注册推送，用于iOS8之前的系统
+        UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge |
+        UIRemoteNotificationTypeAlert |
+        UIRemoteNotificationTypeSound;
+        [application registerForRemoteNotificationTypes:myTypes];
+        
+        
+    }
+
+}
+#pragma -mark 打印异常（非常好的方法）
+void uncaughtExceptionHandler(NSException *exception) {
+    DDLOG(@"CRASH: %@", exception);
+    DDLOG(@"Stack Trace: %@", [exception callStackSymbols]);
+    // Internal error reporting
+}
 -(void)removeLun
 {
     [lunchView removeFromSuperview];
@@ -245,7 +281,9 @@
                     [DEFAULT setInteger:num forKey:@"login"];
                     [DEFAULT synchronize];
                     NSString *userid = [resultBlock objectForKey:@"userid"];
-                    [self getMessage:userid];
+                   // [self getMessage:userid];
+                    
+                    [[Server shareInstance] getMessage:userid];
                     
                 }
                 else
@@ -290,7 +328,8 @@
                 int flag = [[resultBlock objectForKey:@"ret"] intValue];
                 if (flag == 0) {
                     NSString *userid = [resultBlock objectForKey:@"userid"];
-                    [self getMessage:userid];
+                    //[self getMessage:userid];
+                    [[Server shareInstance] getMessage:userid];
                     [MobClick profileSignInWithPUID:userName];
                 }
             }
@@ -318,73 +357,6 @@
     [userDefault removeObjectForKey:@"tk"];
     [userDefault removeObjectForKey:@"IMToken"];
 
-}
-
--(void)getMessage:(NSString *)userid
-{
-    __block NSMutableArray *message = nil;
-    NSString *pathsandox = NSHomeDirectory();
-    NSString *newPath = [NSString stringWithFormat:@"%@/Documents/%@/time.plist",pathsandox,userid];
-    NSDictionary *timeDict = [[NSDictionary alloc]initWithContentsOfFile:newPath];
-    NSString *postTime = timeDict[@"time"];
-    if(postTime == nil)
-    {
-        postTime = @"0";
-    }
-
-    NSDictionary *paretemers = [[NSDictionary alloc]initWithObjectsAndKeys:@"getmsg",@"cmd",@"iOS",@"os",userid,@"userid",postTime,@"t", nil];
-    [[DataManager shareInstance]ConnectServer:STRURL parameters:paretemers isPost:YES result:^(NSDictionary *resultBlock) {
-        message = [resultBlock objectForKey:@"msglist"];
-        if(message.count > 0)
-        {
-            NSMutableArray *mutArr = [NSMutableArray array];
-            for (int i = 0; i < message.count; i++) {
-                NSDictionary *dict = message[i];
-                NSMutableDictionary *mutdict = [NSMutableDictionary dictionaryWithDictionary:dict];
-                [mutdict setObject:@"1" forKey:@"tag"];
-                [mutArr addObject:mutdict];
-            }
-            NSUserDefaults *userDefault = [NSUserDefaults new];
-            [userDefault setObject:message forKey:@"messasge"];
-            time = resultBlock[@"t"];
-            NSThread *thread = [[NSThread alloc]initWithTarget:self selector:@selector(thread:) object:mutArr];
-            [thread start];
-            NSString *str = @"login";
-            NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:str,@"login",mutArr,@"msg", nil];
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:dict];
-            [[UIApplication sharedApplication]setApplicationIconBadgeNumber:message.count];
-        }
-    }];
-}
--(void)thread:(id)obj
-{
-    NSMutableArray *dataDict =  [NSMutableArray arrayWithArray:obj];
-    //把图片存起来
-    NSString *pathsandox = NSHomeDirectory();
-    NSUserDefaults *userDefault = [NSUserDefaults new];
-    NSString *userid = [userDefault objectForKey:@"userid"];
-    NSString *newPath = [NSString stringWithFormat:@"%@/Documents/%@",pathsandox,userid];
-    //写入plist文件
-    BOOL isDir = NO;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    BOOL existed = [fileManager fileExistsAtPath:newPath isDirectory:&isDir];
-    if ( !(isDir == YES && existed == YES) )
-    {
-        [fileManager createDirectoryAtPath:newPath withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    NSString *plistPath = [NSString stringWithFormat:@"%@/Documents/%@/msg.plist",pathsandox,userid];
-    NSArray *arr = [[NSArray alloc]initWithContentsOfFile:plistPath];
-    [dataDict addObjectsFromArray:arr];
-    if ([dataDict writeToFile:plistPath atomically:YES]) {
-        NSLog(@"写入成功");
-    };
-    //写入时间
-    NSDictionary *timeDict = @{@"time":time};
-    NSString *timePath = [NSString stringWithFormat:@"%@/Documents/%@/time.plist",pathsandox,userid];
-    if ([timeDict writeToFile:timePath atomically:YES]) {
-        NSLog(@"写入成功");
-        
-    };
 }
 
 
@@ -481,7 +453,8 @@
 #pragma -mark 初始化IM
 -(void)initIM
 {
-    NSString *appkey = @"pvxdm17jxmiir";//测试
+    NSString *appkey = @"uwd1c0sxdcvv1";//正式
+    //NSString *appkey = @"pvxdm17jxmiir";//测试
     NSString *token = [DEFAULT objectForKey:@"IMToken"];
     [[RCIM sharedRCIM]initWithAppKey:appkey];
     //设置会话列表头像，会话界面头像
@@ -492,7 +465,7 @@
     [RCIM sharedRCIM].receiveMessageDelegate = self;
     //开启多端未读状态同步
     [RCIM sharedRCIM].enableSyncReadStatus = YES;
-    [RCIM sharedRCIM].enableMessageAttachUserInfo = YES;
+    [RCIM sharedRCIM].enableMessageAttachUserInfo = NO;
     //开启输入状态监听
     [RCIM sharedRCIM].enableTypingStatus = YES;
     //开启消息回撤功能
@@ -508,42 +481,21 @@
     [[RCIM sharedRCIM] setGroupMemberDataSource:RCDataSource];
     [[RCIM sharedRCIM] setGroupUserInfoDataSource:RCDataSource];
     [[RCIM sharedRCIM]connectWithToken:token success:^(NSString *userId) {
+        [_myTabBar.act refreshConversationTableViewIfNeeded];
         //同步群
-      //  [RCDataSource syncGroup];
+        [RCDataSource syncGroup];
         //同步通讯录
-     //   [RCDataSource getAddressBook:^(NSDictionary *addressDict) {
+        [RCDataSource getAddressBook:^(NSDictionary *addressDict) {
             
-     //   }];
+        }];
+        [[RCIM sharedRCIM] clearUserInfoCache];
+        [[RCIM sharedRCIM] clearGroupInfoCache];
+        
         
     } error:^(RCConnectErrorCode status) {
         NSLog(@"登陆的错误码为%ld",(long)status);
     } tokenIncorrect:^{
         NSLog(@"token错误");
-        //获取token
-        NSString *username = [DEFAULT objectForKey:@"username"];
-        NSString *userid = [DEFAULT objectForKey:@"userid"];
-        NSString *getUrl = [NSString stringWithFormat:@"%@rongyun.do?getToken&userName=%@&userId=%@",MAINURL,username,userid];
-        getUrl = [getUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        [[DataManager shareInstance]ConnectServer:getUrl parameters:nil isPost:NO result:^(NSDictionary *resultBlock) {
-            NSString *token = resultBlock[@"token"];
-            NSInteger code = [resultBlock[@"code"] integerValue];
-            if(token.length > 0&& code == 200)
-            {
-                [[RCIM sharedRCIM]connectWithToken:token success:^(NSString *userId) {
-                  //  [RCDataSource syncGroup];
-                  //  [RCDataSource getAddressBook:^(NSDictionary *addressDict) {
-                        
-                  //  }];
-                } error:^(RCConnectErrorCode status) {
-                    
-                } tokenIncorrect:^{
-                    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"无法连接到服务器" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-                    [alertView show];
-                    
-                }];
-                [DEFAULT setObject:token forKey:@"IMToken"];
-            }
-        }];
     }];
     [[NSNotificationCenter defaultCenter]
      addObserver:self
@@ -576,10 +528,10 @@
 -(BOOL)onRCIMCustomAlertSound:(RCMessage*)message
 {
     //当应用处于前台运行，收到消息不会有提示音。
-    //  if ([message.content isMemberOfClass:[RCGroupNotificationMessage class]]) {
+      if ([message.content isMemberOfClass:[RCGroupNotificationMessage class]]) {
     return NO;
-    //  }
-    //  return NO;
+      }
+    return YES;
 }
 //收到推送消息
 - (void)onRCIMReceiveMessage:(RCMessage *)message
@@ -665,11 +617,7 @@
         }
     }
 }
-//-(void)saveGroup:(NSString *)groupId
-//{
-//    NSMutableArray *mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:@"groupInfo"]];
-//    
-//}
+
 -(void)disMissThread:(NSString *)groupId
 {
     NSMutableArray *mutArr = [NSMutableArray arrayWithArray:[Tool readFileFromPath:@"groupInfo"]];
@@ -683,19 +631,20 @@
     [Tool deleteFile:groupId];
     
 }
+
 - (void)onRCIMConnectionStatusChanged:(RCConnectionStatus)status
 {
-//    if (status == ConnectionStatus_KICKED_OFFLINE_BY_OTHER_CLIENT) {
-//        UIAlertView *alert = [[UIAlertView alloc]
-//                              initWithTitle:@"提示"
-//                              message:
-//                              @"您的帐号在别的设备上登录，"
-//                              @"在此设备您将收不到新的消息！"
-//                              delegate:nil
-//                              cancelButtonTitle:@"知道了"
-//                              otherButtonTitles:nil, nil];
-//        [alert show];
-//    }
+    if (status == ConnectionStatus_KICKED_OFFLINE_BY_OTHER_CLIENT) {
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:@"提示"
+                              message:
+                              @"您的帐号在别的设备上登录，"
+                              @"在此设备您将收不到新的消息！"
+                              delegate:nil
+                              cancelButtonTitle:@"知道了"
+                              otherButtonTitles:nil, nil];
+        [alert show];
+    }
      if (status == ConnectionStatus_TOKEN_INCORRECT) {
         NSString *token = [DEFAULT objectForKey:@"IMToken"];
         [[RCIM sharedRCIM] connectWithToken:token
@@ -710,11 +659,41 @@
     }
 
 }
+-(UIViewController *)getCurrentController
+{
+    UIViewController *result = nil;
+    UIWindow *window = self.window;
+    if(window.windowLevel != UIWindowLevelNormal)
+    {
+        NSArray *windows = [[UIApplication sharedApplication] windows];
+        for (UIWindow *tmp in windows) {
+            if(tmp.windowLevel == UIWindowLevelNormal)
+            {
+                window = tmp;
+                break;
+            }
+        }
+    }
+    UIView *frontView = [[window subviews] objectAtIndex:0];
+    id nextResponder = [frontView nextResponder];
+    if([nextResponder isKindOfClass:[UIViewController class]])
+    {
+        result = nextResponder;
+    }
+    else
+    {
+        result = window.rootViewController;
+    }
+    return result;
+}
 #pragma -mark JPUSHRegisterDelegate
 //iOS10 support
 -(void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler
 {
     NSDictionary * userInfo = notification.request.content.userInfo;
+    
+    
+    
     if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
     }
@@ -724,69 +703,163 @@
 -(void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler
 {
     NSDictionary * userInfo = response.notification.request.content.userInfo;
+    
+    [self pushJump:userInfo];
+    
+    
     if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
     }
     completionHandler();  // 系统要求执行这个方法
 }
+-(void)pushJump:(NSDictionary *)userInfo
+{
+    NSInteger num= [[UIApplication sharedApplication] applicationIconBadgeNumber];
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:num-1];
+    [JPUSHService setBadge:num-1];
+   // UIApplicationState state = [UIApplication sharedApplication].applicationState;
+        NSString *customizeField = [userInfo valueForKey:@"customUrl"];
+        // NSString *content;
+        if(customizeField.length > 0)
+        {
+            id tmp  = userInfo[@"aps"][@"alert"];
+            NSString *str = tmp;
+            if([tmp isKindOfClass:[NSDictionary class]])
+            {
+                NSDictionary *newDict = (NSDictionary *)tmp;
+                str = newDict[@"body"];
+            }
+            NSString *userid = [DEFAULT objectForKey:@"userid"];
+            if(userid.length > 0)
+            {
+                NSTimeInterval cuttentTime = [[Tool shareInstance]getCurrentData];
+                NSString *current = [NSString stringWithFormat:@"%f",cuttentTime];
+                
+                NSDictionary *dict = @{@"content":str,@"tag":@"1",@"title":@"矿业圈推送",@"type":@"011",@"time":current,@"url":customizeField,@"ico":@"http://miningcircle.com/m5/img/app/msg_type/240.png"};
+                //小红点
+                [DEFAULT setObject:dict forKey:@"messasge"];
+
+                NSDictionary *obj = @{@"login":@"login",@"msg":dict};
+                [[NSNotificationCenter defaultCenter]postNotificationName:@"isLogin" object:obj];
+                NSThread *pushSaveThread = [[NSThread alloc]initWithTarget:self selector:@selector(pushSaveThread:) object:dict];
+                [pushSaveThread start];
+            }
+            [self jumpToNotification:customizeField];
+        }
+        else
+        {
+            NSArray *allKeys = userInfo.allKeys;
+            BOOL isRY = NO ;
+            for (NSString *key in allKeys) {
+                if([key isEqualToString:@"rc"])
+                {
+                    isRY = YES;
+                    break;
+                }
+            }
+            //跳转到极光
+            if(!isRY)
+            {
+                NSDictionary *dict = userInfo[@"aps"];
+                NSString * content = dict[@"alert"];
+                [self jumpToNotificationText:content];
+            }
+            //跳转到融云
+            else
+            {
+                [self jumpToRongyun:userInfo];
+            }
+        }
+
+}
+-(void)pushSaveThread:(NSDictionary *)pushDict
+{
+    NSMutableArray *dataDict =  [NSMutableArray arrayWithObject:pushDict];
+    //把图片存起来
+    NSString *pathsandox = NSHomeDirectory();
+    NSUserDefaults *userDefault = [NSUserDefaults new];
+    NSString *userid = [userDefault objectForKey:@"userid"];
+    NSString *newPath = [NSString stringWithFormat:@"%@/Documents/%@",pathsandox,userid];
+    //写入plist文件
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:newPath isDirectory:&isDir];
+    if ( !(isDir == YES && existed == YES) )
+    {
+        [fileManager createDirectoryAtPath:newPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    NSString *plistPath = [NSString stringWithFormat:@"%@/Documents/%@/msg.plist",pathsandox,userid];
+    NSArray *arr = [[NSArray alloc]initWithContentsOfFile:plistPath];
+    [dataDict addObjectsFromArray:arr];
+    if ([dataDict writeToFile:plistPath atomically:YES]) {
+        NSLog(@"写入成功");
+    };
+}
+/**
+ * 推送处理2(rongyun)
+ */
+//注册用户通知设置
+- (void)application:(UIApplication *)application
+didRegisterUserNotificationSettings:
+(UIUserNotificationSettings *)notificationSettings {
+    // register to receive notifications
+    [application registerForRemoteNotifications];
+}
+
 -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
-    NSDictionary *dict = notification.userInfo[@"rc"];
-    NSString *cType = dict[@"cType"];
-  //  NSString *oName = dict[@"oName"];
-    NSString *tId = dict[@"tId"];
-    //系统消息
-    if ([cType isEqualToString:@"PR"])
-    {
-        //跳转到个人聊天页面
-        //跳转到群聊天页面
-        IMRCChatViewController *conversationVC = [[IMRCChatViewController alloc]init];
-        conversationVC.targetId  = tId;
-        conversationVC.conversationType = ConversationType_PRIVATE;
-        _myTabBar.navigationController.navigationBarHidden = NO;
-        [_myTabBar.navigationController pushViewController:conversationVC animated:YES];
-        
-    }
-    else if ([cType isEqualToString:@"GRP"])
-    {
-        //跳转到群聊天页面
-        IMRCChatViewController *conversationVC = [[IMRCChatViewController alloc]init];
-        conversationVC.targetId  = tId;
-        conversationVC.conversationType = ConversationType_GROUP;
-        _myTabBar.navigationController.navigationBarHidden = NO;
-        [_myTabBar.navigationController pushViewController:conversationVC animated:YES];
-    }
-    
-  //  NSLog(@"MMMMMMM%@",notification.userInfo);
+    [self jumpToRongyun:notification.userInfo];
+ //   NSLog(@"MMMMMMM%@",notification.userInfo);
 }
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    //NSLog(@"ccccc");
-   // NSLog(@"userinfo---%@",userInfo);
-    NSString *customizeField = [userInfo valueForKey:@"customUrl"];
-   // NSString *content;
-    if(customizeField.length > 0)
-    {
-        [self jumpToNotification:customizeField];
-    }
-    else
-    {
-        NSDictionary *dict = userInfo[@"aps"];
-       NSString * content = dict[@"alert"];
-        [self jumpToNotificationText:content];
-    }
+    [self pushJump:userInfo];
     [JPUSHService handleRemoteNotification:userInfo];
 }
 
 -(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
+    
+//    NSString *token = [[deviceToken description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+//    _AppDeviceToken=[token stringByReplacingOccurrencesOfString:@" " withString:@""];
+  //  [[UIApplication sharedApplication] ]
+    
+    
+  //  NSString *identifierForVendor = [[UIDevice currentDevice].identifierForVendor UUIDString];
+    NSString *token =
+    [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"
+                                                           withString:@""]
+      stringByReplacingOccurrencesOfString:@">"
+      withString:@""]
+     stringByReplacingOccurrencesOfString:@" "
+     withString:@""];
+    
+    [[RCIMClient sharedRCIMClient] setDeviceToken:token];
+    
     [JPUSHService registerDeviceToken:deviceToken];
 }
+
+/**
+ * 推送处理4
+ * userInfo内容请参考官网文档
+ */
 - (void)application:(UIApplication *)application
 didReceiveRemoteNotification:(NSDictionary *)userInfo {
     
-   // NSLog(@"ddddd");
-   // NSLog(@"userinfo111---%@",userInfo);
+    /**
+     * 获取融云推送服务扩展字段2
+     */
+    NSDictionary *pushServiceData = [[RCIMClient sharedRCIMClient]
+                                     getPushExtraFromRemoteNotification:userInfo];
+    if (pushServiceData) {
+        NSLog(@"该远程推送包含来自融云的推送服务");
+        for (id key in [pushServiceData allKeys]) {
+            NSLog(@"key = %@, value = %@", key, pushServiceData[key]);
+        }
+    } else {
+        NSLog(@"该远程推送不包含来自融云的推送服务");
+    }
+
     [JPUSHService handleRemoteNotification:userInfo];
 }
 
@@ -794,16 +867,30 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
 {
     ShowTextViewController *showText = [[ShowTextViewController alloc]initWithNibName:@"ShowTextViewController" bundle:nil];
     showText.msg = msg;
-    _myTabBar.navigationController.navigationBarHidden = NO;
-    [_myTabBar.navigationController pushViewController:showText animated:YES];
+   [_myTabBar.currentController.navigationController pushViewController:showText animated:YES];
 }
 -(void)jumpToNotification:(NSString *)strUrl
 {
-    BannerDetailViewController *bannerDetail = [[BannerDetailViewController alloc]init];
-    bannerDetail.herfStr = strUrl;
-   // NSLog(@"%@",_myTabBar.navigationController);
-    _myTabBar.navigationController.navigationBarHidden = NO;
-    [_myTabBar.navigationController pushViewController:bannerDetail animated:YES];
+    WebViewViewController *web = [[WebViewViewController alloc]init];
+    web.herfStr = strUrl;
+    
+//    BannerDetailViewController *bannerDetail = [[BannerDetailViewController alloc]init];
+//    bannerDetail.pushHidden = YES;
+//    bannerDetail.herfStr = strUrl;
+//    bannerDetail.backBtn.hidden = YES;
+//    SearchView *searchView = [_myTabBar.currentController.navigationController.navigationBar viewWithTag:711];
+//    searchView.hidden = YES;
+   [_myTabBar.currentController.navigationController pushViewController:web animated:YES];
+}
+-(void)jumpToRongyun:(NSDictionary *)userInfo
+{
+   // NSDictionary *dict = userInfo[@"rc"];
+  //  NSString *cType = dict[@"cType"];
+    //  NSString *oName = dict[@"oName"];
+  //  NSString *tId = dict[@"tId"];
+    
+    UIButton *btn = [_myTabBar.customTabBar viewWithTag:3];
+    [_myTabBar.customTabBar btnClick:btn];
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -823,8 +910,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
     [self login];
     [self gestureLock];
      [[UIApplication sharedApplication]setStatusBarHidden:NO];
-    [application setApplicationIconBadgeNumber:0];
-    [application cancelAllLocalNotifications];
+    //[application cancelAllLocalNotifications];
     
 }
 
@@ -840,7 +926,7 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
       //  [self initIM];
     }
     num++;
-    
+  //  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
     [self getRedPoint];
     
     [NSTimer scheduledTimerWithTimeInterval:840 target:self selector:@selector(connectionServer) userInfo:nil repeats:YES];
@@ -871,6 +957,9 @@ didReceiveRemoteNotification:(NSDictionary *)userInfo {
         lg = @"cn";
     }
         NSDictionary *paramers = @{@"cmd":@"getmenu",@"time":postTime,@"usercat":usercat,@"applabel":tag,@"lg":lg,@"os":@"ios"};
+    
+    
+    
         [[DataManager shareInstance]ConnectServer:STRURL parameters:paramers isPost:YES result:^(NSDictionary *resultBlock) {
             int  tag = [resultBlock[@"ret"] intValue];
             if(tag == 0)

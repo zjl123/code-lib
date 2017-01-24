@@ -40,6 +40,7 @@
     [_collectionView registerClass:[TwoLabelCollectionViewCell class] forCellWithReuseIdentifier:@"two"];
     [self startLoadView];
     [self loadData];
+   // self.title = @"";
 }
 -(void)startLoadView
 {
@@ -56,6 +57,7 @@
 }
 -(void)loadData
 {
+     dataArr = @[@"消息免打扰",@"会话置顶",@"清空聊天记录"];
      [RCDataSource getUserInfoWithUserId:_userId completion:^(RCUserInfo *userInfo) {
          NSString *name = userInfo.name;
          name = [Tool judgeNil:name];
@@ -65,9 +67,9 @@
          imgUrl = [Tool judgeNil:imgUrl];
          NSDictionary *dict = @{@"userName":name,@"userImg":imgUrl,@"userId":userId};
          user = [[IMUserModel alloc]initWithDictionary:dict];
+         [_collectionView reloadData];
     }];
-    dataArr = @[@"消息免打扰",@"会话置顶",@"清空聊天记录"];
-   [_collectionView reloadData];
+    
 }
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface UpDownBtn1 : UIButton
-@property(nonatomic,retain) NSString *title;
-@property(nonatomic,retain)NSString *imgStr;
+@property (nonatomic, retain) NSString *title;
+//http
+@property (nonatomic, retain) NSString *imgStr;
+//local
+@property (nonatomic, retain) NSString *img;
 @end
